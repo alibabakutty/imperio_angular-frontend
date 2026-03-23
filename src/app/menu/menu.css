@@ -1,0 +1,136 @@
+/* Container to center the menu on the screen */
+.gateway-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f7f9; /* Light grey background */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* The Main Menu Box */
+.tally-card {
+  width: 350px;
+  border: 2px solid #32527b; /* Tally Dark Blue */
+  background-color: #e3f2fd; /* Tally Light Blue */
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+/* Blue Header Bar */
+.tally-header {
+  background-color: #18447e;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+}
+
+/* Section Labels (MASTERS, TRANSACTIONS) */
+.section-label {
+  color: #78909c;
+  font-size: 15px;
+  padding: 10px 15px 5px;
+  text-align: center;
+  letter-spacing: 1px;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+/* Individual Menu Rows */
+.menu-item {
+  padding: 4px 25px;
+  color: #000;
+  font-size: 17px;
+  cursor: pointer;
+  display: block;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+/* The Yellow Selection Bar (Matching 'Create' in your image) */
+.menu-item.active {
+  background-color: #ffeb3b; /* Bright Yellow */
+  font-weight: bold;
+}
+
+/* The Blue/Bold Hotkey (The first letter) */
+.hotkey {
+  color: #0d47a1; /* Deep Blue */
+  font-weight: bold;
+  text-decoration: underline;
+  margin-right: 1px;
+}
+
+/* Hover effect for interactivity */
+.menu-item:hover {
+  background-color: #fff9c4;
+}
+
+.quit {
+  margin-top: 20px;
+  padding-bottom: 15px;
+}
+
+
+.tally-background {
+  width: 100%;
+  height: 100vh;
+  /* Base cream color */
+  background-color: #fdfae6; 
+  
+  /* The angled orange/tan swoosh */
+  background-image: linear-gradient(
+    175deg, 
+    transparent 55%, 
+    #f8e7b5 55.2%, 
+    #f8e7b5 75%, 
+    transparent 35.2%
+  );
+  
+  /* Ensures the background stays fixed while scrolling if needed */
+  background-attachment: fixed;
+}
+
+
+/* Keeps your existing background and adds the illustration on top */
+.tally-background {
+  position: relative;
+  overflow: hidden; /* Prevents the illustration from causing scrollbars */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The "7.0 Thoughtfully built" and Rocket illustration layer */
+.tally-background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Replace the URL below with your actual image path if you have the asset */
+   background-repeat: no-repeat;
+  background-position: center; 
+  background-size: contain;
+  
+  /* Adjust opacity so it doesn't distract from the menu */
+  opacity: 0.8; 
+  z-index: 0; 
+  pointer-events: none; /* Clicking passes through to the menu */
+}
+
+/* Ensure the menu stays in front of the illustration */
+.container {
+  position: relative;
+  z-index: 10;
+}
+
+/* Small Fix: Ensure your container doesn't have a background that hides the Tally slope */
+.gateway-container {
+  background-color: transparent !important;
+  height: auto; /* Let the tally-background handle height */
+}

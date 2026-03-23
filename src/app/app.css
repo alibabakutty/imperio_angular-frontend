@@ -1,0 +1,165 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: rgb(51, 138, 182);
+  color: #ffffff;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 20px;
+}
+
+.nav-left {
+  font-size: 18px;
+  font-weight: 600;
+  cursor: default;
+}
+
+/* --- Dropdown Styles --- */
+.login-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: transparent;
+  color: white;
+  padding: 8px 16px;
+  font-size: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Yellow highlight when active or hovered */
+.dropbtn.active, .dropbtn:hover {
+  color: #fbc02d;
+  border-color: #fbc02d;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropbtn i {
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.dropbtn.active {
+  color: #fbc02d;
+  border-color: #fbc02d;
+}
+
+.dropdown-content {
+  display: none; /* Controlled by .show class in TS */
+  position: absolute;
+  right: 0;
+  background-color: #ffffff;
+  min-width: 210px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 4px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+.dropdown-content a {
+  color: #333333 !important;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  font-family: sans-serif;
+  cursor: pointer;
+}
+
+.dropdown-content a i {
+  margin-right: 8px;
+  color: rgb(51, 138, 182);
+}
+
+.dropdown-content a:hover,
+.dropdown-content a.focused {
+  background-color: #e9ecef;
+  color: rgb(51, 138, 182) !important;
+}
+
+.dropdown-content a i {
+  margin-right: 10px;
+  color: rgb(51, 138, 182);
+}
+
+/* Show on Hover */
+.login-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* --- Other Styles --- */
+.user-welcome {
+  font-size: 16px;
+}
+
+.logout-link {
+  margin-left: 15px;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logout-link:hover {
+  color: #fbc02d;
+}
+
+body {
+  background-color: rgb(220, 229, 238);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.image-container img {
+  max-width: 67%;
+  height: auto;
+  border-radius: 10px;
+  background-color: rgb(215, 245, 250);
+  padding-bottom: 8px;
+}
+
+.bottom-container {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(0, 102, 153);
+  color: white;
+  text-align: center;
+  align-items: center;
+  padding: 5px 20px;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+
+.bottom-container h6 {
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+}
+
+.social-links a {
+  color: white;
+  font-size: 20px;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover, h6:hover {
+  color: #fbc02d;
+  cursor: pointer;
+}

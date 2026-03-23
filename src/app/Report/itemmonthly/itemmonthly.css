@@ -1,0 +1,191 @@
+/* ================= MAIN LAYOUT ================= */
+
+.reporttable {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+/* ================= TOP SECTION ================= */
+
+.top-section {
+  background: white;
+}
+
+/* ================= SEARCH / FILTER SECTION ================= */
+
+.Search {
+  background-color: rgb(24, 98, 141);
+  padding: 10px;
+  color: white;
+  margin: 10px 0;
+  border-radius: 6px;
+  align-items: center;
+  text-align: center;
+  border-color: #dc3545 ;
+  box-shadow: #ad767a;
+
+}
+
+.filterGrp {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  align-items: center;
+}
+
+.filterGrp label {
+  min-width: 100px;
+  text-align: center;
+  font-weight: 600;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.filterGrp input {
+  width: 350px;
+  padding: 3px;
+  border-radius: 5px;
+  align-items: center;
+  text-align: center;
+  margin-left: 50px;
+  border: 2px solid #ad767a;
+  color: blue;
+}
+
+.filter-item label{
+  display: flex;
+  margin-left: 50px;
+}
+/* ================= TABLE SECTION ================= */
+
+.table-wrapper {
+  flex: 2;
+  overflow-y: auto;
+  overflow-x: auto;
+ }
+
+/* TABLE */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid black;
+}
+
+/* HEADER */
+
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #e9eef1;
+  text-align: center;
+  border: 1px solid black;
+  z-index: 10;
+}
+
+/* BODY CELLS */
+
+th, td {
+  padding: 2px;
+  min-width: 70px;
+  white-space: nowrap;
+  border: 1px solid black;
+}
+
+td {
+  background-color: rgba(240, 248, 252, 0.95);
+  text-align: center;
+}
+
+/* ROW HOVER */
+
+tbody tr {
+  transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+  background-color: #f8d7da;
+}
+
+/* CELL FOCUS */
+
+td:focus {
+  outline: 2px solid #d1d7dd;
+  background-color: #e3f2fd;
+}
+
+td:focus-within {
+  background-color: #f8d7da;
+  outline: 2px solid #dc3545;
+}
+
+/* ================= OVERALL TOTAL ================= */
+
+.overall-total {
+  /*margin-top: 10px;*/
+  font-weight: bold;
+  text-align: right;
+}
+
+/* ================= BUTTON TOOLBAR ================= */
+
+.Bottmtoolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1x;
+  padding-top: 1px;
+ /* border-top: 1px solid #ccc;*/
+}
+
+/* BUTTON STYLE */
+
+.left-side,
+.right-side {
+  background-color: rgb(13, 108, 185);
+  color: white;
+  border-radius: 8px;
+  padding: 8px 18px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.left-side:hover,
+.right-side:hover {
+  background-color: rgb(8, 80, 140);
+}/* ================= STICKY LEFT COLUMNS ================= */
+
+.sticky-col {
+  position: sticky;
+  background: #ffffff;
+  z-index: 10;
+}
+
+/* First Sticky Column (Product Name) 
+.name-col {
+  left: 70px;    Adjust based on S.No width 
+  min-width: 400px;
+ }
+
+ Second Sticky Column (Product Group) 
+.group-col {
+  left: 270px;  
+  min-width: 150px;
+}
+.uom-col {
+  left: 420px; 
+  min-width: 100px;
+}
+
+/
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: 0;
+  background: #ffffff;
+  z-index: 10;
+}*/

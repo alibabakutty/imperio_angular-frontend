@@ -1,0 +1,90 @@
+
+
+/* 🌌 Background Gradient */
+.page-wrapper {
+  height: 91.4vh;
+  background: linear-gradient(to right, #1fb6c9, #cfd8dc);
+  position: relative;
+}
+
+/* 🔙 Back Button */
+.back-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #4dd0e1;
+  border: none;
+  padding: 4px 7px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* 📦 Main Form Panel */
+.form-panel {
+  width: 550px;
+  background: #e8e4d8;
+  padding: 20px 30px;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  border: 1px solid #999;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+/* 🟢 Header */
+.panel-header {
+  background: #0b6b2f;
+  color: white;
+  text-align: center;
+  padding: 6px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* 📄 Row Layout */
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* 🏷 Labels */
+.row label {
+  width: 180px;
+  font-size: 13px;
+}
+
+/* ✏ Inputs */
+.row input {
+  width: 250px;
+  padding: 2px 6px;
+  border: 1px solid #777;
+  background: #f4f1e6;
+  font-size: 12px;
+}
+
+/* 💾 Button */
+.btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+button {
+  background: #1e5bd7;
+  color: white;
+  border: none;
+  padding: 5px 20px;
+  height: 28px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #154bb5;
+}

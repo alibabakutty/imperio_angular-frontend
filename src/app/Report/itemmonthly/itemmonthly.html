@@ -1,0 +1,128 @@
+
+   <div class="reporttable">
+    <div class="top-section">
+
+
+    <div class="Search">
+      <h4>Filter On Tables</h4>
+
+      <div class="filterGrp">
+
+        <div class="filter-item">
+          <label>Product Name </label>
+          <input list="ProductName"
+                 type="text"
+                 [(ngModel)]="searchText"
+                 (input)="filterProduct()"
+                 placeholder="Search Product Name..."
+                 class="form-control">
+                 <datalist id="ProductName">
+                 <option *ngFor="let row of filterData">{{row.Itemname}}</option>
+                 </datalist>
+        </div>
+
+        <div class="filter-item">
+          <label>Product Group </label>
+          <input type="text"
+                 list="ProductGrp"
+                 [(ngModel)]="ProductSubGrp"
+                 (input)="filterGroup()"
+                 placeholder="Search Product Group...">
+                 <datalist id="ProductGrp">
+                 <option *ngFor="let row of Unigroup">{{row}}</option>
+                 </datalist>
+        </div>
+
+        <div class="filter-item">
+          <label>Product UOM </label>
+          <input type="text"
+                 list="ProductUOM"
+                 [(ngModel)]="productUom"
+                 (input)="FilterUom()"
+                 placeholder="Search Product UOM...">
+                 <datalist id="ProductUOM">
+                 <option *ngFor="let row of ListUOM">{{row}}</option>
+                 </datalist>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== SCROLLABLE TABLE ===== -->
+  <div class="table-wrapper">
+
+    <table class="table table-striped" #excelTable>
+
+      <thead>
+        <tr> 
+          <th style="border-right:0.5px solid black; text-align:center;">S.No</th>
+          <th style="border-right:0.5px solid black; text-align:center;padding-left: 5px;">Product Name</th>
+          <th style="border-right:0.5px solid black; text-align:center; ">Product Group</th> 
+          <th style="border-right:0.5px solid black; text-align:center; ">UOM</th> 
+          <th style="border-right:0.5px solid black; text-align:center;">Budget Year</th> 
+          <th *ngFor="let month of Months" style="border-right:1px solid black; text-align:center;"> 
+            {{ month }} 
+          </th> 
+          <th style="border-right:0.5px solid black; text-align:center; ">Total</th> 
+        </tr>
+      </thead>
+
+      <tbody>
+       <tr *ngFor="let row of filterData; let rowIndex = index" #tableRow tabindex="0" class="Rowidentify">
+         <td style="border-right:0.5px solid black; text-align:center;"> {{ rowIndex + 1 }} </td> 
+         <td style="border-right:0.5px solid black; text-align:left;padding-left: 5px;" >
+           {{ row.Itemname }} 
+          </td> 
+         <td style="border-right:0.5px solid black; text-align:center;" >
+           {{ row.ItemSubgroup }} 
+          </td> 
+         <td style="border-right:0.5px solid black; text-align:center;"> 
+          {{ row.BaseUnits }} 
+        </td> 
+         <td style="border-right:0.5px solid black; text-align:center;"> {{ row.Year }} </td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.Januaray }}</td>
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.Feburary }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.March }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.April }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.May }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.June }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.July }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.Auguest }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.September }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.October }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.November }}</td> 
+         <td style="border-right:0.5px solid black; text-align:center;">{{ row.December }}</td> 
+         <td style="border-right:0.5px solid black; text-align:right;"> {{ row.Total }} </td> 
+        </tr>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <th style="border-right:0.5px solid black; text-align:center;"></th> 
+          <th style="border-right:0.5px solid black; text-align:center;padding-left: 5px;">Total</th> 
+          <th style="border-right:0.5px solid black; text-align:center;"></th> 
+          <th style="border-right:0.5px solid black; text-align:center;"></th> 
+          <th style="border-right:0.5px solid black; text-align:center;"></th> 
+          <th *ngFor="let month of Months" style="border-right:1px solid black; text-align:center;"> 
+            {{ totals[month] !== 0 ? totals[month] : '' }} </th>
+          <th style="border-right:0.5px solid black; text-align:center;">
+          </th> 
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- ===== OVERALL TOTAL ===== -->
+  <div class="overall-total">
+    Overall Total: {{ overallTotal }}
+  </div>
+
+  <!-- ===== BOTTOM TOOLBAR ===== -->
+  <div class="Bottmtoolbar">
+    <button class="left-side" (click)="onback()">Back</button>
+    <button class="right-side" (click)="exportToExcel()">Export Excel</button>
+  </div>
+
+</div>

@@ -1,0 +1,113 @@
+<div class="page-wrapper">
+  <button class="back-btn border rounded" (click)="goBack()">Back</button>
+
+  <div class="form-panel">
+    <div class="panel-header">Inventory Master</div>
+
+    <form [formGroup]="inventoryForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <label>Item Code :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="stockItemCode"
+          (input)="toUpperCase($event)"
+          (keydown.enter)="onEnter($any($event), 0)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Item Name :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="stockItemName"
+          (input)="capitalizeWords($event)"
+          (keydown.enter)="onEnter($any($event), 1)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Description :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="stockItemDescription"
+          (input)="capitalizeWords($event)"
+          (keydown.enter)="onEnter($any($event), 2)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Category :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="stockItemCategory"
+          (input)="capitalizeWords($event)"
+          (keydown.enter)="onEnter($any($event), 3)"
+        />
+      </div>
+
+      <div class="row">
+        <label>UOM :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="uom"
+          (input)="toUpperCase($event)"
+          (keydown.enter)="onEnter($any($event), 4)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Rate Master :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="rateMaster"
+          ((input))="onRateMasterChange($event)"
+          (keydown.enter)="onEnter($any($event), 5)"
+        />
+      </div>
+
+      <div class="btn-container">
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 🔥 MODAL -->
+  <div class="overlay" *ngIf="showRateMaster">
+    <div class="modal-box">
+      <div class="modal-header">Allocations of Product :</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>MRP</th>
+            <th>Rate</th>
+            <th>VAT %</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let row of rateMasterRows">
+            <td><input type="date" [(ngModel)]="row.rateMasterDate" /></td>
+            <td><input type="text" [(ngModel)]="row.rateMasterMrp" /></td>
+            <td><input type="text" [(ngModel)]="row.rateMasterRate" /></td>
+            <td><input type="text" [(ngModel)]="row.vatPercentage" /></td>
+            <td><input type="text" [(ngModel)]="row.rateMasterStatus" /></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="modal-actions">
+        <button (click)="addRow()">+ Add Row</button>
+        <button (click)="closeRateMaster()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

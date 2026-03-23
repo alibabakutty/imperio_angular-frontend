@@ -1,0 +1,70 @@
+ table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  margin-top: 15px;
+  
+}
+
+table th,
+table td {
+  padding: 1px 2px; 
+  text-align: Left; 
+ border: 1.5px solid black;
+}
+
+table th {
+  text-align: left; 
+}
+
+.reporthead{
+
+    padding: 15px;
+      background-color: #e3f2fd; 
+  
+}
+
+.left-side{
+    background-color: rgb(13, 108, 185);
+    width: 100px;
+    display: inline;
+    color: white;
+    float: left;
+    border-radius: 10px;
+    padding: 10px 10px 10px 10px;
+    font-family: 'Times New Roman', Times, serif;
+
+}
+
+.right-side{
+     background-color: rgb(13, 108, 185);
+    float: right;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 10px 10px 10px 10px;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+}
+ 
+button{
+    display: flex;
+}
+.text-end {
+  text-align: right !important;
+  padding-right: 20px;
+  font-family: 'Courier New', Courier, monospace; 
+}
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: white; 
+}
+
+td:focus {
+  outline: 2px solid blue;
+  background-color: #e6f2ff;
+}
+
+
+
