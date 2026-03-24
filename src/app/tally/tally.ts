@@ -24,7 +24,7 @@ export class Tally {
     {
       title: 'TRANSACTIONS',
       items: [
-        { label: 'Imperio Sales Order', hotkey: 'S', path: 'sales_order'}
+        { label: 'Imperio Sales Order', hotkey: 'I', path: 'sales_order'}
       ]
     }
   ];
