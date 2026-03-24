@@ -108,24 +108,46 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
   // 🔥 SUBMIT
   onSubmit() {
-    if (this.inventoryForm.invalid) {
-      alert('Please fill all required fields');
-      return;
-    }
-
-    const payload = {
-      ...this.inventoryForm.value,
-      rateMasterDetails: this.rateMasterRows,
-    };
-
-    this.http.post(this.apiUrl, payload).subscribe({
-      next: () => {
-        alert('Created successfully');
-        this.resetForm();
-      },
-      error: (err) => console.error(err),
-    });
+  if (this.inventoryForm.invalid) {
+    alert('Please fill all required fields');
+    return;
   }
+
+  // Extract form values
+  const formValues = this.inventoryForm.value;
+
+  const payload = {
+    stockItemCode: formValues.stockItemCode,
+    stockItemName: formValues.stockItemName,
+    stockItemDescription: formValues.stockItemDescription,
+    stockItemCategory: formValues.stockItemCategory,
+    uom: formValues.uom,
+    
+    // ✅ Fix 1: Convert "Yes"/"No" string to a real Boolean
+    rateMaster: formValues.rateMaster.toLowerCase() === 'yes',
+
+    // ✅ Fix 2: Rename 'rateMasterDetails' to 'rateMasterTables' 
+    // ✅ Fix 3: Convert numeric strings to actual numbers
+    rateMasterTables: this.rateMasterRows.map(row => ({
+      rateMasterDate: row.rateMasterDate,
+      rateMasterMrp: Number(row.rateMasterMrp) || 0,
+      rateMasterRate: Number(row.rateMasterRate) || 0,
+      vatPercentage: Number(row.vatPercentage) || 0,
+      rateMasterStatus: row.rateMasterStatus
+    }))
+  };
+
+  this.http.post(this.apiUrl, payload).subscribe({
+    next: () => {
+      alert('Created successfully');
+      this.resetForm();
+    },
+    error: (err) => {
+      console.error("Backend Error:", err);
+      alert('Failed to save. Check if Item Code is unique.');
+    },
+  });
+}
 
   // 🔄 RESET
   resetForm() {

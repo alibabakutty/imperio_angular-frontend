@@ -41,7 +41,7 @@ describe('InventoryMasterComponent', () => {
       stockItemDescription: 'Sample Desc',
       stockItemCategory: 'Category A',
       uom: 'PCS',
-      rateMaster: 100
+      rateMaster: 'Yes'
     });
 
     expect(component.inventoryForm.valid).toBe(true);
