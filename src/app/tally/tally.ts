@@ -15,11 +15,17 @@ export class Tally {
  getMenuSections() {
   return [
     { 
-      title: 'Master', 
+      title: 'MASTERS', 
       items: [
        { label: 'Customer Master', hotkey: 'C', path:'company_master' },
-        { label: 'Inventory Master', hotkey: 'I',  path:'inventory_master' } // Changed hotkey to 'I' to avoid duplicates
-      ] 
+       { label: 'Inventory Master', hotkey: 'I',  path:'inventory_master' }
+      ], 
+    },
+    {
+      title: 'TRANSACTIONS',
+      items: [
+        { label: 'Imperio Sales Order', hotkey: 'S', path: 'sales_order'}
+      ]
     }
   ];
 }

@@ -4,8 +4,15 @@
       IMPERIO SALES ORDER
     </div>
 
+    <div class="nav-center" *ngIf="username">
+      <div class="role-badge" [ngClass]="userRole === 'distributor' ? 'distributor-bg' : 'direct-bg'">
+        <i class="bi" [ngClass]="userRole === 'distributor' ? 'bi-truck' : 'bi-person-check'"></i>
+        {{ userRole === 'distributor' ? 'DISTRIBUTOR PORTAL' : 'DIRECT ORDER PORTAL' }}
+      </div>
+    </div>
+
     <div class="nav-right">
-      <ng-container *ngIf="username; else loginDropdown">
+      <ng-container *ngIf="username; else loginDropdown" class="user-welcome">
         <div class="user-welcome">
           <span>Welcome, <strong>{{ username }}</strong></span>
           <a (click)="logout()" class="logout-link">Logout</a>

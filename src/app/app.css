@@ -2,17 +2,48 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
-  background-color: rgb(51, 138, 182);
-  color: #ffffff;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  font-size: 20px;
+  position: relative;
+  height: 50px;
+  background-color: #18447e;
+  color: white;
+  padding: 0 20px;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.role-badge {
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .nav-left {
   font-size: 18px;
   font-weight: 600;
   cursor: default;
+}
+
+.distributor-bg { background-color: #f39c12; color: #fff; } /* Orange */
+.direct-bg { background-color: #27ae60; color: #fff; }      /* Green */
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid #ff4757;
+  color: #ff4757;
+  padding: 4px 10px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 /* --- Dropdown Styles --- */
@@ -113,11 +144,11 @@
   color: #fbc02d;
 }
 
-body {
+html, body {
   background-color: rgb(220, 229, 238);
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .image-container {

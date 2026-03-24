@@ -39,39 +39,46 @@
   background: #0b6b2f;
   color: white;
   text-align: center;
-  padding: 6px;
+  padding: 2px;
   font-weight: bold;
   margin-bottom: 15px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* 📄 Row Layout */
 .row {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 /* 🏷 Labels */
 .row label {
-  width: 180px;
-  font-size: 13px;
+  width: 140px;
+  font-size: 12px;
 }
 
 /* ✏ Inputs */
 .row input {
-  width: 250px;
-  padding: 2px 6px;
-  border: 1px solid #777;
+  width: 360px;
+  height: 17px;
+  padding: 1px 3px;
+  border: 0.5px solid #777;
   background: #f4f1e6;
-  font-size: 12px;
+  font-size: 11px;
+  border-radius: 0 !important;
+}
+
+.row input:focus {
+  outline: 1px solid #1e5bd7;
+  background: #fff !important;
 }
 
 /* 💾 Button */
 .btn-container {
   display: flex;
-  justify-content: center;
-  margin-top: 30px;
+  justify-content: right;
+  margin-top: 10px;
 }
 
 button {
@@ -80,7 +87,7 @@ button {
   border: none;
   padding: 5px 20px;
   height: 28px;
-  font-size: 13px;
+  font-size: 12px;
   border-radius: 4px;
   cursor: pointer;
 }

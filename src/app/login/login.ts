@@ -77,9 +77,9 @@ export class Login implements OnInit {
     this.logService.login(loginPayload, this.currentRole).subscribe({
       next: (res: any) => {
         if (res.token) {
-          // localStorage.setItem('authToken', res.token);
-          // localStorage.setItem('username', res.username);
-          // localStorage.setItem('userRole', res.role);
+          
+          this.logService.setSession(res.username, this.currentRole, res.token);
+
           this.app.IsValid = true;
           this.router.navigateByUrl('/menu');
           this.isLoading = false;

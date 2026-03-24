@@ -13,6 +13,7 @@ import { LoginService } from './login/loginservice';
 })
 export class App implements OnInit {
   username: string | null = null;
+  userRole: string | null = null;
   token: string | null = null;
   ImagePath: String = 'assets/Tally Main.jpeg';
   compayname: String = 'Cloud 9 Soft Technologies';
@@ -46,6 +47,11 @@ export class App implements OnInit {
       // } else {
       //   this.IsValid = true;
       // }
+    });
+
+    // Listen for Role changes
+    this.loginService.role$.subscribe((role) => {
+      this.userRole = role;
     });
   }
 
