@@ -67,6 +67,7 @@
           type="text"
           formControlName="rateMaster"
           ((input))="onRateMasterChange($event)"
+          (input)="capitalizeWords($event)"
           (keydown.enter)="onEnter($any($event), 5)"
         />
       </div>
