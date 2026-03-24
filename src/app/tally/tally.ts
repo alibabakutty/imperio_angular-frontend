@@ -17,8 +17,8 @@ export class Tally {
     { 
       title: 'MASTERS', 
       items: [
-       { label: 'Customer Master', hotkey: 'C', path:'company_master' },
-       { label: 'Inventory Master', hotkey: 'I',  path:'inventory_master' }
+       { label: 'Customer Master', hotkey: 'C', path:'submenu' },
+       { label: 'Inventory Master', hotkey: 'I',  path:'submenu' }
       ], 
     },
     {

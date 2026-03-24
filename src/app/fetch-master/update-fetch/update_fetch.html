@@ -1,0 +1,32 @@
+<div class="main-container">
+  <div class="top-nav">
+    <button class="back-btn">← Back</button>
+    <input type="text" placeholder="Search..." class="search-input">
+    <span class="update-title">Inventory Master Update</span>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>UOM</th>
+          <th>Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of groups; track item.code) {
+          <tr>
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.tallyReport }}</td>
+            <td>{{ item.subReport }}</td>
+            <td>{{ item.dc }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

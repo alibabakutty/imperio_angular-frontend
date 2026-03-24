@@ -1,0 +1,39 @@
+<div class="main-container">
+  <div class="top-nav">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <input type="text" placeholder="Search..." class="search-input" />
+    <span class="display-title">{{ displayTitle }}</span>
+  </div>
+
+  <div class="table-wrapper">
+
+    <!-- Loader -->
+    @if (loading) {
+      <div class="loader">Loading...</div>
+    }
+
+    <!-- Table -->
+    @if (!loading) {
+      <table class="data-table">
+        <thead>
+          <tr>
+            @for (col of columns; track col) {
+              <th>{{ col }}</th>
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (item of (groups$ | async); track item.code) {
+            <tr>
+              @for (key of dataKeys; track key) {
+                <td>{{ item[key] }}</td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+  </div>
+</div>

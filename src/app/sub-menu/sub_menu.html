@@ -1,0 +1,24 @@
+<div class="tally-background">
+  <div class="container">
+    <div class="gateway-container">
+      <div class="tally-card">
+        <div class="tally-header">{{ headerTitle }}</div>
+        
+        <div class="tally-body">
+          <div class="menu-section">
+            <div class="section-label">SUB-MASTERS</div>
+            
+            <div *ngFor="let item of menuItems" 
+                 class="menu-item" (click)="routepath(item.path)">
+              <span class="hotkey">{{ item.hotkey }}</span>{{ item.label.substring(1) }}
+            </div>
+          </div>
+          
+          <div class="menu-item quit" (click)="routepath('menu')">
+            <span class="hotkey">Q</span>uit
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
