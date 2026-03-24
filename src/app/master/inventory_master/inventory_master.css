@@ -1,214 +1,171 @@
-/* 🌌 Global Wrapper & Background */
+/* 🌌 Background Gradient - Reference Style */
 .page-wrapper {
   height: 91.4vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(to right, #1fb6c9, #cfd8dc);
   position: relative;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
 }
 
-/* 🔙 Back Button - Refined */
+/* 🔙 Back Button */
 .back-btn {
   position: absolute;
-  top: 15px;
-  left: 15px;
-  background: #455a64;
+  top: 10px;
+  left: 10px;
+  background: #4dd0e1;
   border: none;
-  padding: 6px 14px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
   color: white;
   cursor: pointer;
   font-size: 12px;
-  font-weight: 600;
-  transition: background 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-weight: bold;
 }
 
-.back-btn:hover {
-  background: #263238;
-}
-
-/* 📦 Main Form Panel - Clean & Balanced */
+/* 📦 Main Form Panel - Beige Style */
 .form-panel {
+  width: 550px;
+  background: #e8e4d8;
+  padding: 20px 30px;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  border: 1px solid #999;
   position: absolute;
-  top: 40px;
-  right: 40px;
-  width: 500px;
-  background: #ffffff;
-  padding: 0; /* Let header handle padding */
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  border: 1px solid #d1d9e6;
-  overflow: hidden;
+  top: 20px;
+  right: 20px;
 }
 
-/* 🟢 Header - Bold & Professional */
-.panel-header {
-  background: #1a5276; /* Professional Deep Blue */
+/* 🟢 Header - Dark Green */
+.panel-header, .modal-header {
+  background: #0b6b2f;
   color: white;
-  text-align: left;
-  padding: 12px 20px;
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  border-bottom: 3px solid #154360;
-}
-
-/* 📄 Form Body Padding */
-form {
-  padding: 25px;
+  text-align: center;
+  padding: 6px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-bottom: none;
 }
 
 /* 📄 Row Layout */
 .row {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-/* 🏷 Labels - Aligned & Clear */
+/* 🏷 Labels */
 .row label {
-  width: 140px;
+  width: 180px;
   font-size: 13px;
-  color: #444;
-  font-weight: 500;
+  color: #000;
+  font-weight: normal;
 }
 
-/* ✏ Inputs - Modern Focus States */
+/* ✏ Inputs - Pale Beige */
 .row input {
-  flex: 1;
-  padding: 6px 10px !important;
-  border: 1px solid #ced4da !important;
-  border-radius: 4px !important;
-  background: #f8f9fa !important;
-  font-size: 13px !important;
-  transition: all 0.2s ease;
+  width: 250px;
+  padding: 2px 6px !important;
+  border: 1px solid #777 !important;
+  background: #f4f1e6 !important;
+  font-size: 12px !important;
+  border-radius: 0 !important;
 }
 
 .row input:focus {
-  outline: none;
-  border-color: #1a5276 !important;
+  outline: 1px solid #1e5bd7;
   background: #fff !important;
-  box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
 }
 
-/* 💾 Primary Action Button */
+/* 💾 Save Button - Classic Blue */
 .btn-container {
-  text-align: right;
-  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
 }
 
 button[type="submit"] {
-  background: #27ae60;
+  background: #1e5bd7;
   color: white;
-  padding: 8px 30px;
-  font-weight: 600;
-  border-radius: 4px;
   border: none;
+  padding: 5px 25px;
+  height: 28px;
+  font-size: 13px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background 0.2s;
-}
-
-button[type="submit"]:hover {
-  background: #219150;
 }
 
 /* 🌫️ MODAL OVERLAY */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
 
-/* 📦 MODAL BOX */
+/* 📦 MODAL BOX - Matching Beige */
 .modal-box {
-  width: 700px; /* Wider for table comfort */
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-  overflow: hidden;
-  animation: slideIn 0.3s ease-out;
+  width: 750px;
+  background: #e8e4d8;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  border: 1px solid #999;
 }
 
-@keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-header {
-  background: #f1f4f8;
-  padding: 12px 20px;
-  font-weight: bold;
-  font-size: 14px;
-  color: #333;
-  border-bottom: 1px solid #dee2e6;
-}
-
-/* 📊 Professional Table */
+/* 📊 Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
+  background: #f4f1e6;
 }
 
 th {
-  background: #f8f9fa;
-  color: #666;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 1px;
-  padding: 10px;
-  border-bottom: 2px solid #dee2e6;
-  text-align: left;
+  background: #ccc;
+  color: #333;
+  font-size: 12px;
+  padding: 6px;
+  border: 1px solid #999;
+  text-align: center;
 }
 
 td {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
+  padding: 2px;
+  border: 1px solid #999;
 }
 
 td input {
-  border: 1px solid #e0e0e0;
-  padding: 4px 8px;
-  border-radius: 3px;
+  border: none !important;
+  background: transparent !important;
+  padding: 4px !important;
   width: 100%;
   font-size: 12px;
+  text-align: left;
 }
 
-.manual-date-input {
-  width: 100px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+td input:focus {
+  background: #fff !important;
+  outline: none;
 }
 
-/* Modal Buttons */
+.text-right { text-align: right !important; }
+
+/* Modal Footer */
 .modal-actions {
   display: flex;
-  justify-content: space-between;
-  padding: 15px 20px;
-  background: #f8f9fa;
+  justify-content: flex-end;
+  padding: 10px 0 0 0;
+  background: transparent;
 }
 
 .modal-actions button {
-  padding: 6px 15px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.modal-actions button:first-child {
-  background: #1a5276;
+  background: #d32f2f; /* Red for Close */
   color: white;
-}
-
-.modal-actions button:last-child {
-  background: #e74c3c;
-  color: white;
+  padding: 4px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

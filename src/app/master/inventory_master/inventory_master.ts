@@ -113,8 +113,45 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     this.rateMasterRows[rowIndex][colName] = val;
   }
 
+  onTableEnter(event: any, rowIndex: number, colName: string) {
+  // Only trigger if Enter is pressed
+  if (event.key !== 'Enter') return;
+  
+  event.preventDefault();
+
+  // If we are on the 'status' column, handle row creation/navigation
+  if (colName === 'status') {
+    const currentRow = this.rateMasterRows[rowIndex];
+    
+    // Check if this is the last row in the array
+    if (rowIndex === this.rateMasterRows.length - 1) {
+      // Logic: If status is entered, create a new blank row
+      this.addNewRateRow();
+      
+      // Focus the first field of the NEW row after a tiny delay
+      setTimeout(() => {
+        const nextRowDateInput = document.getElementById(`date-${rowIndex + 1}`) as HTMLInputElement;
+        nextRowDateInput?.focus();
+      }, 50);
+    } else {
+      // If not the last row, just move focus to the date field of the next existing row
+      const nextRowDateInput = document.getElementById(`date-${rowIndex + 1}`) as HTMLInputElement;
+      nextRowDateInput?.focus();
+    }
+  } else {
+    // If we are in MRP, Rate, or VAT, move focus to the next input in the SAME row
+    const columnOrder = ['date', 'mrp', 'rate', 'vat', 'status'];
+    const nextColIndex = columnOrder.indexOf(colName) + 1;
+    const nextColName = columnOrder[nextColIndex];
+    
+    const nextInput = document.getElementById(`${nextColName}-${rowIndex}`) as HTMLInputElement;
+    nextInput?.focus();
+    nextInput?.select(); // Select text for easier overwriting
+  }
+}
+
   // Row actions
-  addRow() {
+  addNewRateRow() {
     this.rateMasterRows.push({
       rateMasterDate: '',
       rateMasterMrp: 0,

@@ -98,35 +98,76 @@
         <tbody>
           <tr *ngFor="let row of rateMasterRows; let i = index">
             <td>
-              <input type="text" [(ngModel)]="row.rateMasterDate" 
-                     placeholder="" class="text-center" 
-                     (blur)="parseDateInput($event, i)" />
+              <input
+                type="text"
+                [id]="'date-' + i"
+                [(ngModel)]="row.rateMasterDate"
+                placeholder="DD-MM-YYYY"
+                (blur)="parseDateInput($event, i)"
+                (keydown.enter)="onTableEnter($event, i, 'date')"
+              />
             </td>
+
             <td>
-              <input type="text" class="text-right"
-                [value]="focusedCell === i + '-mrp' ? row.rateMasterMrp : formatToNaira(row.rateMasterMrp)"
+              <input
+                type="text"
+                [id]="'mrp-' + i"
+                class="text-right"
+                [value]="
+                  focusedCell === i + '-mrp' ? row.rateMasterMrp : formatToNaira(row.rateMasterMrp)
+                "
                 (focus)="handleFocus(i, 'mrp')"
-                (blur)="handleBlur(i, 'rateMasterMrp', $event)" />
+                (blur)="handleBlur(i, 'rateMasterMrp', $event)"
+                (keydown.enter)="onTableEnter($event, i, 'mrp')"
+              />
             </td>
+
             <td>
-              <input type="text" class="text-right"
-                [value]="focusedCell === i + '-rate' ? row.rateMasterRate : formatToNaira(row.rateMasterRate)"
+              <input
+                type="text"
+                [id]="'rate-' + i"
+                class="text-right"
+                [value]="
+                  focusedCell === i + '-rate'
+                    ? row.rateMasterRate
+                    : formatToNaira(row.rateMasterRate)
+                "
                 (focus)="handleFocus(i, 'rate')"
-                (blur)="handleBlur(i, 'rateMasterRate', $event)" />
+                (blur)="handleBlur(i, 'rateMasterRate', $event)"
+                (keydown.enter)="onTableEnter($event, i, 'rate')"
+              />
             </td>
+
             <td>
-              <input type="text" class="text-right"
-                [value]="focusedCell === i + '-vat' ? row.vatPercentage : (row.vatPercentage | number:'1.2-2') + '%'"
+              <input
+                type="text"
+                [id]="'vat-' + i"
+                class="text-right"
+                [value]="
+                  focusedCell === i + '-vat'
+                    ? row.vatPercentage
+                    : (row.vatPercentage | number: '1.2-2') + '%'
+                "
                 (focus)="handleFocus(i, 'vat')"
-                (blur)="handleBlur(i, 'vatPercentage', $event)" />
+                (blur)="handleBlur(i, 'vatPercentage', $event)"
+                (keydown.enter)="onTableEnter($event, i, 'vat')"
+              />
             </td>
-            <td><input type="text" [(ngModel)]="row.rateMasterStatus" /></td>
+
+            <td>
+              <input
+                type="text"
+                [id]="'status-' + i"
+                [(ngModel)]="row.rateMasterStatus"
+                (keydown.enter)="onTableEnter($event, i, 'status')"
+              />
+            </td>
           </tr>
         </tbody>
       </table>
 
       <div class="modal-actions">
-        <button (click)="addRow()">+ Add Row</button>
+        <!-- <button (click)="addNewRateRow()">+ Add Row</button> -->
         <button (click)="closeRateMaster()">Close</button>
       </div>
     </div>
