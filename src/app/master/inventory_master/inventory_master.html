@@ -80,7 +80,9 @@
   <!-- 🔥 MODAL -->
   <div class="overlay" *ngIf="showRateMaster">
     <div class="modal-box">
-      <div class="modal-header">Allocations of Product :</div>
+      <div class="modal-header">
+        Allocations of Product : {{ inventoryForm.get('stockItemName')?.value }}
+      </div>
 
       <table>
         <thead>
@@ -94,11 +96,30 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let row of rateMasterRows">
-            <td><input type="date" [(ngModel)]="row.rateMasterDate" /></td>
-            <td><input type="text" [(ngModel)]="row.rateMasterMrp" /></td>
-            <td><input type="text" [(ngModel)]="row.rateMasterRate" /></td>
-            <td><input type="text" [(ngModel)]="row.vatPercentage" /></td>
+          <tr *ngFor="let row of rateMasterRows; let i = index">
+            <td>
+              <input type="text" [(ngModel)]="row.rateMasterDate" 
+                     placeholder="" class="text-center" 
+                     (blur)="parseDateInput($event, i)" />
+            </td>
+            <td>
+              <input type="text" class="text-right"
+                [value]="focusedCell === i + '-mrp' ? row.rateMasterMrp : formatToNaira(row.rateMasterMrp)"
+                (focus)="handleFocus(i, 'mrp')"
+                (blur)="handleBlur(i, 'rateMasterMrp', $event)" />
+            </td>
+            <td>
+              <input type="text" class="text-right"
+                [value]="focusedCell === i + '-rate' ? row.rateMasterRate : formatToNaira(row.rateMasterRate)"
+                (focus)="handleFocus(i, 'rate')"
+                (blur)="handleBlur(i, 'rateMasterRate', $event)" />
+            </td>
+            <td>
+              <input type="text" class="text-right"
+                [value]="focusedCell === i + '-vat' ? row.vatPercentage : (row.vatPercentage | number:'1.2-2') + '%'"
+                (focus)="handleFocus(i, 'vat')"
+                (blur)="handleBlur(i, 'vatPercentage', $event)" />
+            </td>
             <td><input type="text" [(ngModel)]="row.rateMasterStatus" /></td>
           </tr>
         </tbody>

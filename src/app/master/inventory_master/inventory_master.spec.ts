@@ -9,7 +9,7 @@ describe('InventoryMasterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-        declarations: [InventoryMasterComponent],
+      declarations: [InventoryMasterComponent],
       imports: [
         InventoryMasterComponent,     // ✅ standalone component
         HttpClientTestingModule,      // ✅ for HttpClient

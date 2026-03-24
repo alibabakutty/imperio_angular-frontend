@@ -27,6 +27,7 @@ import { HttpClient } from '@angular/common/http';
 export class InventoryMasterComponent implements OnInit, AfterViewInit {
   inventoryForm!: FormGroup;
   apiUrl = 'http://localhost:8080/api/v1/stock-items';
+  focusedCell: string | null = null;
 
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>;
 
@@ -42,9 +43,9 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
   rateMasterRows: any[] = [
     {
       rateMasterDate: '',
-      rateMasterMrp: '',
-      rateMasterRate: '',
-      vatPercentage: '',
+      rateMasterMrp: 0,
+      rateMasterRate: 0,
+      vatPercentage: 0,
       rateMasterStatus: 'Inactive',
     },
   ];
@@ -60,50 +61,71 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
       rateMaster: ['No', Validators.required],
     });
     // ✅ 🔥 LISTEN TO RATE MASTER CHANGES
-    this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
-      if (!value) return;
-
-      const normalized = value.toLowerCase().trim();
-
-      if (normalized === 'yes') {
-        this.openRateMaster();
-      }
-
-      // optional: close when NO
-      if (normalized === 'no') {
-        this.closeRateMaster();
-      }
+     this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
+      if (value?.toLowerCase().trim() === 'yes') this.openRateMaster();
     });
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.inputFields.first?.nativeElement.focus();
-    }, 100);
+    setTimeout(() => this.inputFields.first?.nativeElement.focus(), 100);
   }
 
-  // 🔥 ENTER NAVIGATION
-  onEnter(event: KeyboardEvent, index: number) {
-    event.preventDefault();
+  // --- Date Shorthand Logic (1.4.26 -> 01-04-2026) ---
+  parseDateInput(event: any, index: number) {
+    let input = event.target.value;
+    if (!input) return;
 
-    const inputs = this.inputFields.toArray();
+    // Standardize separators to dashes
+    input = input.replace(/[\.\/]/g, '-');
+    let parts = input.split('-');
 
-    if (index + 1 < inputs.length) {
-      inputs[index + 1].nativeElement.focus();
-      inputs[index + 1].nativeElement.select();
-    } else {
-      this.onSubmit();
+    if (parts.length === 3) {
+      let day = parts[0].padStart(2, '0');
+      let month = parts[1].padStart(2, '0');
+      let year = parts[2];
+
+      if (year.length === 2) year = '20' + year; // Handle '26' to '2026'
+
+      this.rateMasterRows[index].rateMasterDate = `${day}-${month}-${year}`;
     }
   }
 
-  // 🔥 ESC CLOSE MODAL OR GO BACK
-  @HostListener('document:keydown.escape')
-  handleEscape() {
-    if (this.showRateMaster) {
-      this.closeRateMaster();
-    } else {
-      this.goBack();
-    }
+  // --- Date Converter for PostgreSQL (01-04-2026 -> 2026-04-01) ---
+  formatToIsoDate(dateStr: string): string | null {
+    if (!dateStr || !dateStr.includes('-')) return null;
+    const [day, month, year] = dateStr.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+   // --- Currency & Formatting ---
+  formatToNaira(value: any): string {
+    const num = parseFloat(value) || 0;
+    return `₦ ${num.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  handleFocus(rowIndex: number, colName: string) {
+    this.focusedCell = `${rowIndex}-${colName}`;
+  }
+
+  handleBlur(rowIndex: number, colName: string, event: any) {
+    this.focusedCell = null;
+    const val = parseFloat(event.target.value) || 0;
+    this.rateMasterRows[rowIndex][colName] = val;
+  }
+
+  // Row actions
+  addRow() {
+    this.rateMasterRows.push({
+      rateMasterDate: '',
+      rateMasterMrp: 0,
+      rateMasterRate: 0,
+      vatPercentage: 0,
+      rateMasterStatus: 'Inactive',
+    });
+  }
+
+  removeRow(index: number) {
+    if (this.rateMasterRows.length > 1) this.rateMasterRows.splice(index, 1);
   }
 
   // 🔥 SUBMIT
@@ -126,26 +148,26 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     // ✅ Fix 1: Convert "Yes"/"No" string to a real Boolean
     rateMaster: formValues.rateMaster.toLowerCase() === 'yes',
 
-    // ✅ Fix 2: Rename 'rateMasterDetails' to 'rateMasterTables' 
-    // ✅ Fix 3: Convert numeric strings to actual numbers
     rateMasterTables: this.rateMasterRows.map(row => ({
-      rateMasterDate: row.rateMasterDate,
-      rateMasterMrp: Number(row.rateMasterMrp) || 0,
-      rateMasterRate: Number(row.rateMasterRate) || 0,
-      vatPercentage: Number(row.vatPercentage) || 0,
+      rateMasterDate: this.formatToIsoDate(row.rateMasterDate),
+      rateMasterMrp: parseFloat(parseFloat(row.rateMasterMrp).toFixed(2)) || 0,
+      rateMasterRate: parseFloat(parseFloat(row.rateMasterRate).toFixed(2)) || 0,
+      vatPercentage: parseFloat(parseFloat(row.vatPercentage).toFixed(2)) || 0,
       rateMasterStatus: row.rateMasterStatus
     }))
   };
 
+  console.log("Final Payload to Backend:", payload);
+
   this.http.post(this.apiUrl, payload).subscribe({
     next: () => {
-      alert('Created successfully');
+      alert('Inventory saved successfully!');
       this.resetForm();
     },
     error: (err) => {
-      console.error("Backend Error:", err);
-      alert('Failed to save. Check if Item Code is unique.');
-    },
+      console.error("Full Backend Error:", err);
+      alert('Backend Error: Check IntelliJ logs for the specific stack trace.');
+    }
   });
 }
 
@@ -166,11 +188,6 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.inputFields.first?.nativeElement.focus();
     }, 0);
-  }
-
-  // 🔙 BACK
-  goBack() {
-    this.location.back();
   }
 
   // 🔠 UPPERCASE
@@ -204,6 +221,36 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     }
   }
 
+
+  // 🔥 ENTER NAVIGATION
+  onEnter(event: KeyboardEvent, index: number) {
+    event.preventDefault();
+
+    const inputs = this.inputFields.toArray();
+
+    if (index + 1 < inputs.length) {
+      inputs[index + 1].nativeElement.focus();
+      inputs[index + 1].nativeElement.select();
+    } else {
+      this.onSubmit();
+    }
+  }
+
+  // 🔥 ESC CLOSE MODAL OR GO BACK
+  @HostListener('document:keydown.escape')
+  handleEscape() {
+    if (this.showRateMaster) {
+      this.closeRateMaster();
+    } else {
+      this.goBack();
+    }
+  }
+
+  // 🔙 BACK
+  goBack() {
+    this.location.back();
+  }
+
   // 🔥 RATE MASTER MODAL
   onRateMasterChange(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -220,15 +267,5 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
   closeRateMaster() {
     this.showRateMaster = false;
-  }
-
-  addRow() {
-    this.rateMasterRows.push({
-      rateMasterDate: '',
-      rateMasterMrp: '',
-      rateMasterRate: '',
-      vatPercentage: '',
-      rateMasterStatus: 'Inactive',
-    });
   }
 }
