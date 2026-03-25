@@ -43,7 +43,7 @@ export class SubMenu implements OnInit {
     this.menuItems = [
       { label: 'Create', hotkey: 'C', path: createPath },
       { label: 'Display', hotkey: 'D', path: 'display_fetch' },
-      { label: 'Alter', hotkey: 'A', path: 'update_fetch' },
+      { label: 'Update', hotkey: 'U', path: 'update_fetch' },
     ];
   }
 

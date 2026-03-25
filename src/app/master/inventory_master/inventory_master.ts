@@ -61,7 +61,7 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
       rateMaster: ['No', Validators.required],
     });
     // ✅ 🔥 LISTEN TO RATE MASTER CHANGES
-     this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
+    this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
       if (value?.toLowerCase().trim() === 'yes') this.openRateMaster();
     });
   }
@@ -97,7 +97,7 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     return `${year}-${month}-${day}`;
   }
 
-   // --- Currency & Formatting ---
+  // --- Currency & Formatting ---
   formatToNaira(value: any): string {
     const num = parseFloat(value) || 0;
     return `₦ ${num.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -114,41 +114,45 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
   }
 
   onTableEnter(event: any, rowIndex: number, colName: string) {
-  // Only trigger if Enter is pressed
-  if (event.key !== 'Enter') return;
-  
-  event.preventDefault();
+    // Only trigger if Enter is pressed
+    if (event.key !== 'Enter') return;
 
-  // If we are on the 'status' column, handle row creation/navigation
-  if (colName === 'status') {
-    const currentRow = this.rateMasterRows[rowIndex];
-    
-    // Check if this is the last row in the array
-    if (rowIndex === this.rateMasterRows.length - 1) {
-      // Logic: If status is entered, create a new blank row
-      this.addNewRateRow();
-      
-      // Focus the first field of the NEW row after a tiny delay
-      setTimeout(() => {
-        const nextRowDateInput = document.getElementById(`date-${rowIndex + 1}`) as HTMLInputElement;
+    event.preventDefault();
+
+    // If we are on the 'status' column, handle row creation/navigation
+    if (colName === 'status') {
+      const currentRow = this.rateMasterRows[rowIndex];
+
+      // Check if this is the last row in the array
+      if (rowIndex === this.rateMasterRows.length - 1) {
+        // Logic: If status is entered, create a new blank row
+        this.addNewRateRow();
+
+        // Focus the first field of the NEW row after a tiny delay
+        setTimeout(() => {
+          const nextRowDateInput = document.getElementById(
+            `date-${rowIndex + 1}`,
+          ) as HTMLInputElement;
+          nextRowDateInput?.focus();
+        }, 50);
+      } else {
+        // If not the last row, just move focus to the date field of the next existing row
+        const nextRowDateInput = document.getElementById(
+          `date-${rowIndex + 1}`,
+        ) as HTMLInputElement;
         nextRowDateInput?.focus();
-      }, 50);
+      }
     } else {
-      // If not the last row, just move focus to the date field of the next existing row
-      const nextRowDateInput = document.getElementById(`date-${rowIndex + 1}`) as HTMLInputElement;
-      nextRowDateInput?.focus();
+      // If we are in MRP, Rate, or VAT, move focus to the next input in the SAME row
+      const columnOrder = ['date', 'mrp', 'rate', 'vat', 'status'];
+      const nextColIndex = columnOrder.indexOf(colName) + 1;
+      const nextColName = columnOrder[nextColIndex];
+
+      const nextInput = document.getElementById(`${nextColName}-${rowIndex}`) as HTMLInputElement;
+      nextInput?.focus();
+      nextInput?.select(); // Select text for easier overwriting
     }
-  } else {
-    // If we are in MRP, Rate, or VAT, move focus to the next input in the SAME row
-    const columnOrder = ['date', 'mrp', 'rate', 'vat', 'status'];
-    const nextColIndex = columnOrder.indexOf(colName) + 1;
-    const nextColName = columnOrder[nextColIndex];
-    
-    const nextInput = document.getElementById(`${nextColName}-${rowIndex}`) as HTMLInputElement;
-    nextInput?.focus();
-    nextInput?.select(); // Select text for easier overwriting
   }
-}
 
   // Row actions
   addNewRateRow() {
@@ -167,46 +171,46 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
   // 🔥 SUBMIT
   onSubmit() {
-  if (this.inventoryForm.invalid) {
-    alert('Please fill all required fields');
-    return;
-  }
-
-  // Extract form values
-  const formValues = this.inventoryForm.value;
-
-  const payload = {
-    stockItemCode: formValues.stockItemCode,
-    stockItemName: formValues.stockItemName,
-    stockItemDescription: formValues.stockItemDescription,
-    stockItemCategory: formValues.stockItemCategory,
-    uom: formValues.uom,
-    
-    // ✅ Fix 1: Convert "Yes"/"No" string to a real Boolean
-    rateMaster: formValues.rateMaster.toLowerCase() === 'yes',
-
-    rateMasterTables: this.rateMasterRows.map(row => ({
-      rateMasterDate: this.formatToIsoDate(row.rateMasterDate),
-      rateMasterMrp: parseFloat(parseFloat(row.rateMasterMrp).toFixed(2)) || 0,
-      rateMasterRate: parseFloat(parseFloat(row.rateMasterRate).toFixed(2)) || 0,
-      vatPercentage: parseFloat(parseFloat(row.vatPercentage).toFixed(2)) || 0,
-      rateMasterStatus: row.rateMasterStatus
-    }))
-  };
-
-  console.log("Final Payload to Backend:", payload);
-
-  this.http.post(this.apiUrl, payload).subscribe({
-    next: () => {
-      alert('Inventory saved successfully!');
-      this.resetForm();
-    },
-    error: (err) => {
-      console.error("Full Backend Error:", err);
-      alert('Backend Error: Check IntelliJ logs for the specific stack trace.');
+    if (this.inventoryForm.invalid) {
+      alert('Please fill all required fields');
+      return;
     }
-  });
-}
+
+    // Extract form values
+    const formValues = this.inventoryForm.value;
+
+    const payload = {
+      stockItemCode: formValues.stockItemCode,
+      stockItemName: formValues.stockItemName,
+      stockItemDescription: formValues.stockItemDescription,
+      stockItemCategory: formValues.stockItemCategory,
+      uom: formValues.uom,
+
+      // ✅ Fix 1: Convert "Yes"/"No" string to a real Boolean
+      rateMaster: formValues.rateMaster.toLowerCase() === 'yes',
+
+      rateMasterTables: this.rateMasterRows.map((row) => ({
+        rateMasterDate: this.formatToIsoDate(row.rateMasterDate),
+        rateMasterMrp: parseFloat(parseFloat(row.rateMasterMrp).toFixed(2)) || 0,
+        rateMasterRate: parseFloat(parseFloat(row.rateMasterRate).toFixed(2)) || 0,
+        vatPercentage: parseFloat(parseFloat(row.vatPercentage).toFixed(2)) || 0,
+        rateMasterStatus: row.rateMasterStatus,
+      })),
+    };
+
+    console.log('Final Payload to Backend:', payload);
+
+    this.http.post(this.apiUrl, payload).subscribe({
+      next: () => {
+        alert('Inventory saved successfully!');
+        this.resetForm();
+      },
+      error: (err) => {
+        console.error('Full Backend Error:', err);
+        alert('Backend Error: Check IntelliJ logs for the specific stack trace.');
+      },
+    });
+  }
 
   // 🔄 RESET
   resetForm() {
@@ -258,7 +262,6 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   // 🔥 ENTER NAVIGATION
   onEnter(event: KeyboardEvent, index: number) {
     event.preventDefault();
@@ -295,6 +298,79 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
     if (value === 'yes') {
       this.openRateMaster();
+    }
+  }
+
+  onStatusInput(event: any, index: number) {
+    const value = event.target.value;
+    if (!value) return;
+
+    // Get only the last character typed
+    const lastChar = value.slice(-1).toLowerCase();
+
+    if (lastChar === 'a') {
+      this.rateMasterRows[index].rateMasterStatus = 'Active';
+    } else if (lastChar === 'i') {
+      this.rateMasterRows[index].rateMasterStatus = 'Inactive';
+    } else {
+      // If they type anything else, keep the current value or clear it
+      // This prevents "Activeii" from appearing
+      const current = this.rateMasterRows[index].rateMasterStatus;
+      this.rateMasterRows[index].rateMasterStatus = current;
+    }
+  }
+
+  onStatusKeydown(event: KeyboardEvent, index: number) {
+    const key = event.key.toLowerCase();
+
+    // 1. Handle 'A' for Active
+    if (key === 'a') {
+      event.preventDefault();
+      this.rateMasterRows[index].rateMasterStatus = 'Active';
+      return;
+    }
+
+    // 2. Handle 'I' for Inactive
+    if (key === 'i') {
+      event.preventDefault();
+      this.rateMasterRows[index].rateMasterStatus = 'Inactive';
+      return;
+    }
+
+    // 3. Allow Enter key to propagate to (keydown.enter)
+    if (key === 'enter') {
+      return;
+    }
+
+    // 4. Allow standard navigation/edit keys
+    const allowedKeys = ['backspace', 'tab', 'arrowleft', 'arrowright', 'delete'];
+    if (allowedKeys.includes(key)) {
+      return;
+    }
+
+    // 5. Block everything else (prevents "ActiveD", "Active123", etc.)
+    event.preventDefault();
+  }
+
+  onRateMasterKeydown(event: KeyboardEvent) {
+    const key = event.key.toLowerCase();
+
+    if (key === 'y') {
+      event.preventDefault();
+      this.inventoryForm.get('rateMaster')?.setValue('Yes');
+      return;
+    }
+
+    if (key === 'n') {
+      event.preventDefault();
+      this.inventoryForm.get('rateMaster')?.setValue('No');
+      return;
+    }
+
+    // Allow navigation and Enter (so onEnter still works)
+    const allowed = ['enter', 'tab', 'backspace', 'arrowleft', 'arrowright', 'delete'];
+    if (!allowed.includes(key)) {
+      event.preventDefault();
     }
   }
 

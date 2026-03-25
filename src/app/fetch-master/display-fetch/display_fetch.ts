@@ -66,15 +66,24 @@ export class DisplayFetchComponent {
       },
 
       'Inventory Master': {
-        columns: ['Code', 'Name', 'Category', 'UOM'],
-        keys: ['code', 'name', 'category', 'uom'],
+        columns: ['Code', 'Name', 'Category', 'UOM', 'Rate'],
+        keys: ['code', 'name', 'category', 'uom', 'rate'],
         api: 'http://localhost:8080/api/v1/stock-items',
-        mapper: (item: any) => ({
-          code: item.stockItemCode,
-          name: item.stockItemName,
-          category: item.stockItemCategory,
-          uom: item.uom,
-        }),
+        mapper: (item: any) => {
+          // find the active rate object in the array
+          const activeRateEntry = item.rateMasterTables?.find(
+            (r: any) => r.rateMasterStatus?.toLowerCase() === 'active'
+          );
+          
+          return {
+            code: item.stockItemCode,
+            name: item.stockItemName,
+            category: item.stockItemCategory,
+            uom: item.uom,
+            rate: activeRateEntry ? activeRateEntry.rateMasterRate : '0.00'
+          }
+
+        },
       },
     };
 

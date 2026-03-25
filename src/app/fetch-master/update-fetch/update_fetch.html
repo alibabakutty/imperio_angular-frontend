@@ -1,32 +1,41 @@
 <div class="main-container">
   <div class="top-nav">
-    <button class="back-btn">← Back</button>
-    <input type="text" placeholder="Search..." class="search-input">
-    <span class="update-title">Inventory Master Update</span>
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <input type="text" placeholder="Search..." class="search-input" />
+    <span class="update-title">{{ updateTitle }}</span>
   </div>
 
   <div class="table-wrapper">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Code</th>
-          <th>Name</th>
-          <th>Category</th>
-          <th>UOM</th>
-          <th>Rate</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of groups; track item.code) {
+
+    <!-- Loader -->
+    @if (loading) {
+      <div class="loader">Loading...</div>
+    }
+
+    <!-- Table -->
+    @if (!loading) {
+      <table class="data-table">
+        <thead>
           <tr>
-            <td>{{ item.code }}</td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.tallyReport }}</td>
-            <td>{{ item.subReport }}</td>
-            <td>{{ item.dc }}</td>
+            @for (col of columns; track col) {
+              <th>{{ col }}</th>
+            }
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          @for (item of (groups$ | async); track item.code) {
+            <tr>
+              @for (key of dataKeys; track key) {
+                <td>{{ item[key] }}</td>
+              }
+            </tr>
+          }
+        </tbody>
+
+        
+      </table>
+    }
+
   </div>
 </div>

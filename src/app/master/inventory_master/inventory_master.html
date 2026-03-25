@@ -66,8 +66,10 @@
           #inputField
           type="text"
           formControlName="rateMaster"
-          (input)="onRateMasterChange($event)"
+          (keydown)="onRateMasterKeydown($event)"
           (keydown.enter)="onEnter($any($event), 5)"
+          autocomplete="off"
+          placeholder=""
         />
       </div>
 
@@ -159,7 +161,11 @@
                 type="text"
                 [id]="'status-' + i"
                 [(ngModel)]="row.rateMasterStatus"
+                (keydown)="onStatusKeydown($event, i)"
                 (keydown.enter)="onTableEnter($event, i, 'status')"
+                autocomplete="off"
+                placeholder="A/I"
+                class="form-control"
               />
             </td>
           </tr>
