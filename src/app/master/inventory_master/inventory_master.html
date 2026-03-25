@@ -2,7 +2,13 @@
   <button class="back-btn" (click)="goBack()">Back</button>
 
   <div class="form-panel">
-    <div class="panel-header">Inventory Master</div>
+    <div class="panel-header" [ngClass]="{ 'view-mode': isReadOnly }">
+      {{ isReadOnly ? 'Inventory Details (View Only)' : 'Inventory Master' }}
+    </div>
+
+    @if (isLoading) {
+      <div style="font-size: 11px; text-align: center">Fetching data...</div>
+    }
 
     <form [formGroup]="inventoryForm" (ngSubmit)="onSubmit()">
       <div class="row">
@@ -73,9 +79,11 @@
         />
       </div>
 
-      <div class="btn-container">
-        <button type="submit">Save</button>
-      </div>
+      @if (!isReadOnly) {
+        <div class="btn-container">
+          <button type="submit">Save</button>
+        </div>
+      }
     </form>
   </div>
 

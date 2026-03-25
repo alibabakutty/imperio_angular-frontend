@@ -16,6 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-inventory-master',
@@ -28,6 +29,9 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
   inventoryForm!: FormGroup;
   apiUrl = 'http://localhost:8080/api/v1/stock-items';
   focusedCell: string | null = null;
+  isReadOnly: boolean = false;
+  isLoading: boolean = false;
+  showRateMaster = false;
 
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>;
 
@@ -35,10 +39,8 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private location: Location,
+    private route: ActivatedRoute
   ) {}
-
-  // 🔹 Modal Control
-  showRateMaster = false;
 
   rateMasterRows: any[] = [
     {
@@ -51,6 +53,21 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
   ];
 
   ngOnInit(): void {
+    this.initForm();
+    // capture id and mode from url
+    const id = this.route.snapshot.paramMap.get('id');
+    this.isReadOnly = this.route.snapshot.url.some(segment => segment.path === 'display');
+
+    if (id) {
+      this.fetchInventoryData(id);
+    }
+    // ✅ 🔥 LISTEN TO RATE MASTER CHANGES
+    this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
+      if (value?.toLowerCase().trim() === 'yes') this.openRateMaster();
+    });
+  }
+
+  initForm() {
     this.inventoryForm = this.fb.group({
       id: [null],
       stockItemCode: ['', Validators.required],
@@ -60,14 +77,56 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
       uom: ['', Validators.required],
       rateMaster: ['No', Validators.required],
     });
-    // ✅ 🔥 LISTEN TO RATE MASTER CHANGES
-    this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
-      if (value?.toLowerCase().trim() === 'yes') this.openRateMaster();
-    });
+  }
+
+  fetchInventoryData(id: string) {
+    this.isLoading = true;
+    this.http.get<any>(`${this.apiUrl}/${id}`).subscribe({
+      next: (data) => {
+        // map main fields
+        this.inventoryForm.patchValue({
+          id: data.id,
+          stockItemCode: data.stockItemCode,
+          stockItemName: data.stockItemName,
+          stockItemDescription: data.stockItemDescription,
+          stockItemCategory: data.stockItemCategory,
+          uom: data.uom,
+          rateMaster: data.rateMaster ? 'Yes' : 'No'
+        });
+        // map table rows
+        if (data.rateMasterTables && data.rateMasterTables.length > 0) {
+          this.rateMasterRows = data.rateMasterTables.map((row: any) => ({
+            rateMasterDate: this.formatFromIsoDate(row.rateMasterDate),
+            rateMasterMrp: row.rateMasterMrp,
+            rateMasterRate: row.rateMasterRate,
+            vatPercentage: row.vatPercentage,
+            rateMasterStatus: row.rateMasterStatus
+          }));
+        }
+
+        if (this.isReadOnly) {
+          this.inventoryForm.disable();
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      }
+    })
+  }
+
+  // date parse helper for fetch from database
+  formatFromIsoDate(isoStr: string): string {
+    if (!isoStr) return '';
+    const [year, month, day] = isoStr.split('-');
+    return `${day}-${month}-${year}`;
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.inputFields.first?.nativeElement.focus(), 100);
+    if (!this.isReadOnly) {
+      setTimeout(() => this.inputFields.first?.nativeElement.focus(), 100);
+    }
   }
 
   // --- Date Shorthand Logic (1.4.26 -> 01-04-2026) ---
@@ -114,15 +173,15 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
   }
 
   onTableEnter(event: any, rowIndex: number, colName: string) {
+    if (this.isReadOnly) return;
+
     // Only trigger if Enter is pressed
     if (event.key !== 'Enter') return;
-
     event.preventDefault();
 
     // If we are on the 'status' column, handle row creation/navigation
     if (colName === 'status') {
-      const currentRow = this.rateMasterRows[rowIndex];
-
+      // const currentRow = this.rateMasterRows[rowIndex];
       // Check if this is the last row in the array
       if (rowIndex === this.rateMasterRows.length - 1) {
         // Logic: If status is entered, create a new blank row
@@ -156,6 +215,8 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
   // Row actions
   addNewRateRow() {
+    if(this.isReadOnly) return;
+
     this.rateMasterRows.push({
       rateMasterDate: '',
       rateMasterMrp: 0,
@@ -169,8 +230,24 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     if (this.rateMasterRows.length > 1) this.rateMasterRows.splice(index, 1);
   }
 
+  // 🔥 ENTER NAVIGATION
+  onEnter(event: KeyboardEvent, index: number) {
+    if (this.isReadOnly) return;
+    event.preventDefault();
+
+    const inputs = this.inputFields.toArray();
+
+    if (index + 1 < inputs.length) {
+      inputs[index + 1].nativeElement.focus();
+      inputs[index + 1].nativeElement.select();
+    } else {
+      this.onSubmit();
+    }
+  }
+
   // 🔥 SUBMIT
   onSubmit() {
+    if (this.isReadOnly) return;
     if (this.inventoryForm.invalid) {
       alert('Please fill all required fields');
       return;
@@ -259,20 +336,6 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
     const controlName = input.getAttribute('formControlName');
     if (controlName) {
       this.inventoryForm.get(controlName)?.setValue(formatted, { emitEvent: false });
-    }
-  }
-
-  // 🔥 ENTER NAVIGATION
-  onEnter(event: KeyboardEvent, index: number) {
-    event.preventDefault();
-
-    const inputs = this.inputFields.toArray();
-
-    if (index + 1 < inputs.length) {
-      inputs[index + 1].nativeElement.focus();
-      inputs[index + 1].nativeElement.select();
-    } else {
-      this.onSubmit();
     }
   }
 

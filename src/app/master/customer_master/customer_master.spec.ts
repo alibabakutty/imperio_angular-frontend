@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CompanyMasterComponent } from './company_master';
+import { CustomerMasterComponent } from './customer_master';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe('CompanyMasterComponent', () => {
-  let component: CompanyMasterComponent;
-  let fixture: ComponentFixture<CompanyMasterComponent>;
+describe('CustomerMasterComponent', () => {
+  let component: CustomerMasterComponent;
+  let fixture: ComponentFixture<CustomerMasterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CompanyMasterComponent],
+      declarations: [CustomerMasterComponent],
       imports: [ReactiveFormsModule, HttpClientTestingModule]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CompanyMasterComponent);
+    fixture = TestBed.createComponent(CustomerMasterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

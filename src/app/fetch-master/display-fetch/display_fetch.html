@@ -25,7 +25,7 @@
 
         <tbody>
           @for (item of (groups$ | async); track item.code) {
-            <tr>
+            <tr (click)="navigateToDetail(item)">
               @for (key of dataKeys; track key) {
                 <td>{{ item[key] }}</td>
               }

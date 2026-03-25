@@ -1,9 +1,14 @@
 import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+
+const MASTER_ROUTE_MAP: { [key: string]: string} = {
+  'Customer Master': 'customer',
+  'Inventory Master': 'inventory'
+}
 
 @Component({
   selector: 'app-display-fetch',
@@ -14,19 +19,17 @@ import { Observable } from 'rxjs';
 })
 export class DisplayFetchComponent {
   displayTitle: string = '';
-
   columns: string[] = [];
   dataKeys: string[] = [];
-
   // 🔥 Observable instead of array
   groups$!: Observable<any[]>;
-
   loading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private location: Location,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +60,7 @@ export class DisplayFetchComponent {
         keys: ['code', 'email', 'name', 'region', 'salesExec'],
         api: 'http://localhost:8080/api/v1/customers',
         mapper: (item: any) => ({
+          id: item.id,
           code: item.customerCode,
           email: item.customerMailId,
           name: item.customerName,
@@ -76,6 +80,7 @@ export class DisplayFetchComponent {
           );
           
           return {
+            id: item.id,
             code: item.stockItemCode,
             name: item.stockItemName,
             category: item.stockItemCategory,
@@ -88,6 +93,20 @@ export class DisplayFetchComponent {
     };
 
     return config[title] || config['Customer Master'];
+  }
+
+  navigateToDetail(item: any) {
+    const cleanTitle = this.displayTitle.replace(' Display', '').trim();
+    const routeSegment = MASTER_ROUTE_MAP[cleanTitle];
+
+    const identifier = item.id || item.code;
+
+    if (routeSegment) {
+      this.router.navigate([`/${routeSegment}/display`, identifier]);
+    } else {
+      console.warn(`No routing configuration found for title: ${cleanTitle}`);
+      
+    }
   }
 
   goBack() {

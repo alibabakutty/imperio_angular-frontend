@@ -1,0 +1,76 @@
+<div class="page-wrapper">
+  <!-- 🔙 Back Button -->
+  <button class="back-btn" (click)="goBack()">Back</button>
+
+  <!-- 📦 Main Panel -->
+  <div class="form-panel" >
+    <!-- 🟢 Header -->
+    <div class="panel-header" [ngClass]="{ 'view-mode': isReadOnly }">
+      {{ isReadOnly ? 'Inventory Details (View Only)' : 'Customer Master' }} 
+    </div>
+
+    <!-- 📄 Form -->
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <label>Customer Code :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="customerCode"
+          (input)="toUpperCase($event)"
+          (keydown.enter)="onEnter($any($event), 0)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Customer Name :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="customerName"
+          (input)="capitalizeWords($event)"
+          (keydown.enter)="onEnter($any($event), 1)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Email :</label>
+        <input
+          #inputField
+          type="email"
+          formControlName="customerMailId"
+          (keydown.enter)="onEnter($any($event), 2)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Region :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="customerRegion"
+          (input)="capitalizeWords($event)"
+          (keydown.enter)="onEnter($any($event), 3)"
+        />
+      </div>
+
+      <div class="row">
+        <label>Sales Executive :</label>
+        <input
+          #inputField
+          type="text"
+          formControlName="customerSalesExecutiveName"
+          (input)="capitalizeWords($event)"
+          (keydown.enter)="onEnter($any($event), 4)"
+        />
+      </div>
+
+      <!-- 💾 Save Button -->
+      @if (!isReadOnly) {
+        <div class="btn-container">
+          <button type="submit">Save</button>
+        </div>
+      }
+    </form>
+  </div>
+</div>

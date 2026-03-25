@@ -34,11 +34,11 @@ export class SubMenu implements OnInit {
 
   loadMenuItems(title: string) {
     const routeMap: any = {
-      'Customer Master': 'company_master',
+      'Customer Master': 'customer_master',
       'Inventory Master': 'inventory_master',
     };
 
-    const createPath = routeMap[title] || 'company_master';
+    const createPath = routeMap[title] || 'customer_master';
 
     this.menuItems = [
       { label: 'Create', hotkey: 'C', path: createPath },
