@@ -62,9 +62,9 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
       this.fetchInventoryData(id);
     }
     // ✅ 🔥 LISTEN TO RATE MASTER CHANGES
-    this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
-      if (value?.toLowerCase().trim() === 'yes') this.openRateMaster();
-    });
+    // this.inventoryForm.get('rateMaster')?.valueChanges.subscribe((value) => {
+    //   if (value?.toLowerCase().trim() === 'yes') this.openRateMaster();
+    // });
   }
 
   initForm() {
@@ -241,52 +241,53 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
       inputs[index + 1].nativeElement.focus();
       inputs[index + 1].nativeElement.select();
     } else {
-      this.onSubmit();
+      // this.onSubmit();
+      return;
     }
   }
 
   // 🔥 SUBMIT
-  onSubmit() {
+    onSubmit() {
     if (this.isReadOnly) return;
     if (this.inventoryForm.invalid) {
       alert('Please fill all required fields');
       return;
     }
 
-    // Extract form values
-    const formValues = this.inventoryForm.value;
+    const formValues = this.inventoryForm.getRawValue();
+    const id = formValues.id;
 
     const payload = {
-      stockItemCode: formValues.stockItemCode,
-      stockItemName: formValues.stockItemName,
-      stockItemDescription: formValues.stockItemDescription,
-      stockItemCategory: formValues.stockItemCategory,
-      uom: formValues.uom,
-
-      // ✅ Fix 1: Convert "Yes"/"No" string to a real Boolean
+      ...formValues,
       rateMaster: formValues.rateMaster.toLowerCase() === 'yes',
-
       rateMasterTables: this.rateMasterRows.map((row) => ({
         rateMasterDate: this.formatToIsoDate(row.rateMasterDate),
-        rateMasterMrp: parseFloat(parseFloat(row.rateMasterMrp).toFixed(2)) || 0,
-        rateMasterRate: parseFloat(parseFloat(row.rateMasterRate).toFixed(2)) || 0,
-        vatPercentage: parseFloat(parseFloat(row.vatPercentage).toFixed(2)) || 0,
+        rateMasterMrp: parseFloat(row.rateMasterMrp) || 0,
+        rateMasterRate: parseFloat(row.rateMasterRate) || 0,
+        vatPercentage: parseFloat(row.vatPercentage) || 0,
         rateMasterStatus: row.rateMasterStatus,
       })),
     };
 
-    console.log('Final Payload to Backend:', payload);
-
-    this.http.post(this.apiUrl, payload).subscribe({
-      next: () => {
-        alert('Inventory saved successfully!');
-        this.resetForm();
-      },
-      error: (err) => {
-        console.error('Full Backend Error:', err);
-        alert('Backend Error: Check IntelliJ logs for the specific stack trace.');
-      },
-    });
+    if (id) {
+      // 🔥 UPDATE MODE (PUT)
+      this.http.put(`${this.apiUrl}/${id}`, payload).subscribe({
+        next: () => {
+          alert('Inventory updated successfully!');
+          this.goBack();
+        },
+        error: (err) => console.error('Update failed:', err)
+      });
+    } else {
+      // 🔥 CREATE MODE (POST)
+      this.http.post(this.apiUrl, payload).subscribe({
+        next: () => {
+          alert('Inventory saved successfully!');
+          this.resetForm();
+        },
+        error: (err) => console.error('Save failed:', err)
+      });
+    }
   }
 
   // 🔄 RESET
@@ -428,6 +429,15 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
       event.preventDefault();
       this.inventoryForm.get('rateMaster')?.setValue('No');
       return;
+    }
+
+    if (key === 'enter') {
+      const value = this.inventoryForm.get('rateMaster')?.value;
+      if (value?.toLowerCase().trim() === 'yes') {
+        event.preventDefault();
+        this.openRateMaster();
+        return;
+      }
     }
 
     // Allow navigation and Enter (so onEnter still works)

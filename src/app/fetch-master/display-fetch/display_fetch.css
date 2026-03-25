@@ -71,8 +71,9 @@
 }
 
 .data-table tbody td {
-  padding: 1px 4px;
+  padding: 0.5px 2px;
   border-bottom: 1px solid #e0e0e0;
+  font-size: 11px;
 }
 
 /* Row Coloring */

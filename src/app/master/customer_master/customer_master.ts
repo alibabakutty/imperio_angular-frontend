@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-customer-master',
-  standalone: true, // ✅ IMPORTANT
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './customer_master.html',
   styleUrls: ['./customer_master.css'],
@@ -87,6 +87,7 @@ export class CustomerMasterComponent implements OnInit {
       this.inputFields.first?.nativeElement.focus();
     }, 100);
   }
+
   // but update onEnter to ignore if readOnly
   onEnter(event: KeyboardEvent, index: number) {
     if (this.isReadOnly) return;
@@ -111,27 +112,37 @@ export class CustomerMasterComponent implements OnInit {
   onSubmit() {
     if (this.isReadOnly) return;
     if (this.customerForm.invalid) {
-      alert('Please fill all required fields');
+      alert('Please fill all required fields correctly.');
       return;
     }
 
-    const formData = this.customerForm.value;
+    // Use getRawValue() to ensure 'id' is included even if control is disabled
+    const formData = this.customerForm.getRawValue();
+    const id = formData.id;
 
-    if (formData.id) {
-      this.http.put(`${this.apiUrl}/${formData.id}`, formData).subscribe({
+    if (id) {
+      // 🔥 UPDATE MODE (PUT)
+      this.isLoading = true;
+      this.http.put(`${this.apiUrl}/${id}`, formData).subscribe({
         next: () => {
-          alert('Updated successfully');
-          this.resetForm();
+          alert('Customer updated successfully!');
+          this.isLoading = false;
+          this.goBack();
         },
-        error: (err) => console.error(err),
+        error: (err) => {
+          console.error('Update failed:', err);
+          alert('Error updating customer.');
+          this.isLoading = false;
+        }
       });
     } else {
+      // 🔥 CREATE MODE (POST)
       this.http.post(this.apiUrl, formData).subscribe({
         next: () => {
-          alert('Created successfully');
+          alert('Customer created successfully!');
           this.resetForm();
         },
-        error: (err) => console.error(err),
+        error: (err) => console.error('Creation failed:', err)
       });
     }
   }
