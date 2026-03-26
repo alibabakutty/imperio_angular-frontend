@@ -1,6 +1,8 @@
-import { Component, OnInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { LoginService } from '../../login/loginservice';
 
 interface OrderItem {
   stockCategory: string;
@@ -19,7 +21,7 @@ interface OrderItem {
   templateUrl: './sales_order.html',
   styleUrls: ['./sales_order.css'],
 })
-export class SalesOrderComponent implements OnInit {
+export class SalesOrderComponent implements OnInit, OnDestroy {
   // Header Data
   orderNo = 'SO-25-26-001';
   partyName = 'sriram';
@@ -52,7 +54,20 @@ export class SalesOrderComponent implements OnInit {
 
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>;
 
-  ngOnInit() {}
+  isDistributor: boolean = false;
+    private roleSub!: Subscription;
+
+    constructor(private loginService: LoginService) {}
+
+    ngOnInit() {
+        this.roleSub = this.loginService.role$.subscribe(role => {
+            this.isDistributor = (role === 'distributor');
+        })
+    }
+
+    ngOnDestroy() {
+        if (this.roleSub) this.roleSub.unsubscribe();
+    }
 
   // --- Formatting Helpers ---
   formatNaira(val: number): string {
