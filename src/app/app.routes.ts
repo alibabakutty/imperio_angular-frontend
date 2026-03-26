@@ -7,6 +7,7 @@ import { InventoryMasterComponent } from './master/inventory_master/inventory_ma
 import { SubMenu } from './sub-menu/sub_menu';
 import { DisplayFetchComponent } from './fetch-master/display-fetch/display_fetch';
 import { UpdateFetchComponent } from './fetch-master/update-fetch/update_fetch';
+import { SalesOrderComponent } from './transaction/sales_order/sales_order';
  
 export const routes: Routes = [
 
@@ -34,7 +35,7 @@ export const routes: Routes = [
         { path: 'update/:id', component: InventoryMasterComponent }
       ]
     },
-
+    { path: 'sales_order_create', component: SalesOrderComponent},
     {path: '**', redirectTo: 'login' }
 
 ];

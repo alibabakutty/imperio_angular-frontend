@@ -27,8 +27,17 @@ export class Menu implements OnInit {
   }
 
   routepath(item: any) {
-    this.router.navigate(['/submenu'], {
-      queryParams: { title: item.label }
-    });
+    if (typeof item === 'string') {
+      if(item === 'login') this.router.navigate(['/login']);
+      return;
+    }
+
+    if (item.path === 'submenu') {
+      this.router.navigate(['/submenu'], {
+        queryParams: { title: item.label }
+      });
+    } else {
+      this.router.navigate([`/sales_order_create`]);
+    }
   }
 }

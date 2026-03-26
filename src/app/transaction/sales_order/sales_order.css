@@ -1,1 +1,147 @@
+/* Standardize Global Font */
+.tally-container {
+  background-color: #fffaf4;
+  font-family: Arial, sans-serif;
+  font-size: 11px; /* Matching Table Header size */
+  height: 91.5vh;
+  display: flex;
+  flex-direction: column;
+}
 
+/* 1. Slimming the Nav Bars */
+.nav-bar {
+  background: #2c5697;
+  color: white;
+  display: flex;
+  padding: 1px 10px; /* Reduced padding */
+  font-size: 11px;
+  align-items: center;
+}
+
+.company-name {
+  margin-left: auto; /* More reliable than fixed margins */
+  margin-right: auto;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 15px;
+}
+
+/* 2. Slimming the Field Bar */
+.field-bar {
+  background: #b0c4de;
+  display: flex;
+  padding: 2px 10px; /* Thinner bar */
+  gap: 20px;
+  border-bottom: 1px solid #000;
+  justify-content: space-between;
+}
+
+.label-box {
+  background: #2c5697;
+  color: white;
+  padding: 0px 4px;
+  font-weight: bold;
+}
+
+/* 3. High-Density Table */
+.data-table th {
+  background: #b0c4de;
+  border: 1px solid #000;
+  font-size: 11px;
+  padding: 1px 3px; /* Minimal padding */
+  height: 20px;
+}
+
+.data-table td {
+  border: 1px solid #000;
+  padding: 0;
+  height: 18px; /* Thinner rows */
+}
+
+.data-table input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 0 4px;
+  font-size: 11px; /* Same as header */
+}
+
+/* 4. Slimming the Footer */
+.footer-totals {
+  background: #e6e6bc;
+  border-top: 1px solid #000;
+  padding: 2px 10px; /* Reduced from 5px */
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.total-row {
+  display: grid;
+  /* Exact match to table: 40%(Label) | 8%(Qty) | 5%(Per) | 10%(Rate) | 5%(Disc) | 10%(Net) | 10%(Amt) | 5%(VAT) | 10%(Total) */
+  grid-template-columns: 40% 8% 5% 10% 5% 10% 10% 5% 7%; 
+  font-weight: bold;
+  font-size: 11px;
+  background: #e6e6bc;
+  border-bottom: 1px solid #000;
+}
+
+/* Align values to the right to match table data */
+.total-row span {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 5px;
+  height: 20px;
+  border-left: 1px solid rgba(0,0,0,0.1); /* Thin vertical separators */
+}
+
+.action-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0; /* Reduced from 8px */
+  font-size: 11px;
+}
+
+.approval-info {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex: 2;
+    justify-content: center;
+}
+
+.narration-input {
+  flex: 1;
+  border: 1px solid #999;
+  background: #fdfdf0;
+  height: 18px; /* Matching table row height */
+  padding: 0 100px;
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+.btn-update {
+  background: #228b22;
+  color: white;
+  border: none;
+  padding: 2px 15px; /* Thinner button */
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 20px;
+}
+
+/* Action Button in Table */
+.btn-add {
+  background: #2c5697;
+  color: white;
+  border: none;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  line-height: 1;
+}

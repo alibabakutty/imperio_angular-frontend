@@ -1,0 +1,135 @@
+<div class="tally-container">
+  <div class="nav-bar">
+    <div class="brand">Cloud9 Tally</div>
+    <div class="company-name">Order Booking</div>
+    <div class="nav-actions">
+      <span>Export</span>
+      <span>Print</span>
+      <span>Mail</span>
+    </div>
+  </div>
+
+  <div class="field-bar">
+    <div class="field-item"><span class="label-box">Order No</span> : {{ orderNo }}</div>
+    <div class="field-item"><span class="label-box">Party Ledger Name</span> : {{ partyName }}</div>
+    <div class="field-item">
+      <span class="label-box">Purchase Ledger</span> : {{ purchaseLedger }}
+    </div>
+    <div class="field-item"><span class="label-box">Date</span> : {{ date }}</div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th width="3%">S.No</th>
+          <th width="12%">Stock Category</th>
+          <th width="25%">Name of Item</th>
+          <th width="8%">Qty</th>
+          <th width="5%">Per</th>
+          <th width="10%">Rate</th>
+          <th width="5%">Disc %</th>
+          <th width="10%">Net Rate</th>
+          <th width="10%">Amount</th>
+          <th width="5%">VAT %</th>
+          <th width="10%">Total Amt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items; let i = index">
+          <td class="center">{{ i + 1 }}</td>
+          <td>
+            <input
+              [(ngModel)]="item.stockCategory"
+              #inputField
+              (keydown.enter)="onEnter($event, i * 7)"
+            />
+          </td>
+          <td>
+            <input
+              [(ngModel)]="item.itemName"
+              #inputField
+              (keydown.enter)="onEnter($event, i * 7 + 1)"
+            />
+          </td>
+          <td class="right">
+            <input
+              type="number"
+              [(ngModel)]="item.qty"
+              #inputField
+              (keydown.enter)="onEnter($event, i * 7 + 2)"
+            />
+          </td>
+          <td class="center">{{ item.unit }}</td>
+          <td class="right">
+            <input
+              type="number"
+              [(ngModel)]="item.rate"
+              #inputField
+              (keydown.enter)="onEnter($event, i * 7 + 3)"
+            />
+          </td>
+          <td class="right">
+            <input
+              type="number"
+              [(ngModel)]="item.discPercent"
+              #inputField
+              (keydown.enter)="onEnter($event, i * 7 + 4)"
+            />
+          </td>
+          <td class="right readonly">{{ formatNaira(getNetRate(item)) }}</td>
+          <td class="right readonly">{{ formatNaira(getAmount(item)) }}</td>
+          <td class="right">
+            <input
+              type="number"
+              [(ngModel)]="item.vatPercent"
+              #inputField
+              (keydown.enter)="onEnter($event, i * 7 + 5)"
+            />
+          </td>
+          <td class="right bold readonly">{{ formatNaira(getTotalAmt(item)) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer-totals">
+    <div class="total-row">
+    <span class="col-label">Grand Total :</span>
+
+    <span class="col-qty">{{ getTotalQty() | number: '1.2-2' }}</span>
+
+    <span class="col-empty-per"></span>
+
+    <span class="col-rate">{{ formatNaira(getGrandRate()) }}</span>
+
+    <span class="col-empty-disc"></span>
+
+    <span class="col-net">{{ formatNaira(getGrandNetRate()) }}</span>
+
+    <span class="col-amt">{{ formatNaira(getGrandAmount()) }}</span>
+
+    <span class="col-empty-vat"></span>
+
+    <span class="col-total-amt">{{ formatNaira(getGrandTotal()) }}</span>
+  </div>
+
+    <div class="action-footer-row">
+      <div class="narration-group">
+        <label>Narration :</label>
+        <input [(ngModel)]="narration" class="narration-input" />
+      </div>
+
+      <div class="approval-info">
+        <span
+          >Order Created By: <b>{{ placedBy }}</b></span
+        >
+        <span
+          >Order Approved By: <b>{{ approvedBy }}</b></span
+        >
+      </div>
+
+      <button class="btn-update">CREATE</button>
+    </div>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 
 /* The Main Menu Box */
 .tally-card {
-  width: 350px;
+  width: 300px;
   border: 2px solid #32527b; /* Tally Dark Blue */
   background-color: #e3f2fd; /* Tally Light Blue */
   box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
@@ -24,7 +24,7 @@
   text-align: center;
   padding: 5px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 15px;
   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 
 }
@@ -32,8 +32,8 @@
 /* Section Labels (MASTERS, TRANSACTIONS) */
 .section-label {
   color: #78909c;
-  font-size: 15px;
-  padding: 10px 15px 5px;
+  font-size: 11px;
+  padding: 0px 15px;
   text-align: center;
   letter-spacing: 1px;
   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -41,9 +41,9 @@
 
 /* Individual Menu Rows */
 .menu-item {
-  padding: 4px 25px;
+  padding: 2px 13px;
   color: #000;
-  font-size: 17px;
+  font-size: 13px;
   cursor: pointer;
   display: block;
   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;

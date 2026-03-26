@@ -9,10 +9,11 @@
 }
 
 .tally-card {
-  width: 350px;
+  width: 200px;
   border: 2px solid #32527b;
   background-color: #e3f2fd;
   box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .tally-header {
@@ -21,27 +22,31 @@
   text-align: center;
   padding: 5px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 15px;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .section-label {
   color: #78909c;
-  font-size: 15px;
-  padding: 10px 15px 5px;
+  font-size: 11px;
+  padding: 0px 15px;
   text-align: center;
   letter-spacing: 1px;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .menu-item {
-  padding: 4px 25px;
+  padding: 2px 13px;
   color: #000;
-  font-size: 17px;
+  font-size: 13px;
   cursor: pointer;
   display: block;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .menu-item:hover {
   background-color: #fff9c4;
+  font-weight: bold;
 }
 
 .hotkey {

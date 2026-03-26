@@ -181,9 +181,13 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
     // If we are on the 'status' column, handle row creation/navigation
     if (colName === 'status') {
-      // const currentRow = this.rateMasterRows[rowIndex];
+      const currentRow = this.rateMasterRows[rowIndex];
       // Check if this is the last row in the array
       if (rowIndex === this.rateMasterRows.length - 1) {
+        if (currentRow.rateMasterStatus === 'Active') {
+          alert('Cannot add more rows while current status is Active.');
+          return;
+        }
         // Logic: If status is entered, create a new blank row
         this.addNewRateRow();
 
@@ -216,6 +220,12 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
   // Row actions
   addNewRateRow() {
     if(this.isReadOnly) return;
+
+    const lastRow = this.rateMasterRows[this.rateMasterRows.length - 1];
+
+    if (lastRow && lastRow.rateMasterStatus?.toLowerCase() === 'active') {
+      return;
+    }
 
     this.rateMasterRows.push({
       rateMasterDate: '',
@@ -449,6 +459,14 @@ export class InventoryMasterComponent implements OnInit, AfterViewInit {
 
   openRateMaster() {
     this.showRateMaster = true;
+
+    setTimeout(() => {
+      const firstInput = document.getElementById('date-0') as HTMLInputElement;
+      if (firstInput) {
+        firstInput.focus();
+        firstInput.select();
+      }
+    }, 100);
   }
 
   closeRateMaster() {

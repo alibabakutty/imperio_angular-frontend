@@ -26,7 +26,7 @@ export class SubMenu implements OnInit {
 
       console.log('Received:', this.currentTitle); // DEBUG
 
-      this.headerTitle = this.currentTitle.toUpperCase() + ' MENU';
+      this.headerTitle = this.currentTitle.toUpperCase();
 
       this.loadMenuItems(this.currentTitle);
     });

@@ -65,9 +65,4 @@ export class Tally {
     const url=environment.userapi+"/Tally/Reports/ItemWiseMonthly"
     return this.http.get<any[]>(url,{withCredentials:true})
     }
-
- 
-
 }
-
-
