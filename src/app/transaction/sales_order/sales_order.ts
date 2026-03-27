@@ -17,9 +17,9 @@ interface OrderItem {
   stockCategory: string;
   itemName: string;
   displayName?: string;
-  qty: number;
+  itemQuantity: number;
   unit: string;
-  rate: number;
+  itemRate: number;
   discPercent: number;
   vatPercent: number;
 }
@@ -33,13 +33,13 @@ interface OrderItem {
 })
 export class SalesOrderComponent implements OnInit, OnDestroy {
   // Header
-  orderNo = 'SO-25-26-001';
+  orderNumber = 'Loading....';
   partyName = 'sriram';
-  purchaseLedger = 'VAT Purchase A/c';
-  date = '26-03-2026';
+  ledgerName = 'VAT Purchase A/c';
+  orderDate = this.getTodayDate();
   narration = '';
-  placedBy = 'Sakthi';
-  approvedBy = 'Manager';
+  placedBy = '';
+  approvedBy = '';
 
   items: OrderItem[] = [];
   stockItems: any[] = [];
@@ -63,6 +63,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.addNewRow();
     this.fetchStockItems();
+    this.fetchNextOrderNumber();
 
     this.roleSub = this.loginService.role$.subscribe((role) => {
       this.isDistributor = role === 'distributor';
@@ -72,6 +73,15 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.roleSub?.unsubscribe();
   }
+
+  getTodayDate(): string {
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = now.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
 
   // ================= API =================
   fetchStockItems() {
@@ -159,19 +169,18 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   }
 
   // ================= SELECT PRODUCT =================
-  // ================= SELECT PRODUCT =================
   selectProduct(item: OrderItem, product: any) {
     // ✅ Only put the category in the input field
     item.stockCategory = product.stockItemCategory;
-
     // ✅ Store the name separately (it will show in the "Name of Item" column via binding)
     item.itemName = product.stockItemName;
-
     item.unit = product.uom;
 
-    const activeRate = product.rateMasterTables?.find((r: any) => r.rateMasterStatus === 'active');
+    const activeRate = product.rateMasterTables?.find(
+      (r: any) => r.rateMasterStatus?.toLowerCase() === 'active',
+    );
 
-    item.rate = Number(activeRate?.rateMasterRate) || 0;
+    item.itemRate = Number(activeRate?.rateMasterRate) || 0;
     item.vatPercent = Number(activeRate?.vatPercentage) || 0;
 
     this.closeDropdown();
@@ -179,13 +188,13 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
 
   // ================= CALCULATIONS =================
   getNetRate(item: OrderItem): number {
-    const rate = Number(item.rate) || 0;
+    const itemRate = Number(item.itemRate) || 0;
     const disc = Number(item.discPercent) || 0;
-    return rate - (rate * disc) / 100;
+    return itemRate - (itemRate * disc) / 100;
   }
 
   getAmount(item: OrderItem): number {
-    return (Number(item.qty) || 0) * this.getNetRate(item);
+    return (Number(item.itemQuantity) || 0) * this.getNetRate(item);
   }
 
   getTotalAmt(item: OrderItem): number {
@@ -195,11 +204,11 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   }
 
   getTotalQty() {
-    return this.items.reduce((s, i) => s + (Number(i.qty) || 0), 0);
+    return this.items.reduce((s, i) => s + (Number(i.itemQuantity) || 0), 0);
   }
 
   getGrandRate() {
-    return this.items.reduce((s, i) => s + (Number(i.rate) || 0), 0);
+    return this.items.reduce((s, i) => s + (Number(i.itemRate) || 0), 0);
   }
 
   getGrandNetRate() {
@@ -223,28 +232,174 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     this.items.push({
       stockCategory: '',
       itemName: '',
-      qty: 0,
+      itemQuantity: 0,
       unit: 'Pcs',
-      rate: 0,
+      itemRate: 0,
       discPercent: 0,
       vatPercent: 0,
     });
   }
 
-  onEnter(event: any) {
+  onEnter(event: any, fieldType?: string, rowIndex?: number) {
     event.preventDefault();
 
+    const isLastRow = rowIndex === this.items.length - 1;
+
+    // 1. Logic for Distributor: Add row after 'Qty'
+    if (this.isDistributor && fieldType === 'itemQuantity' && isLastRow) {
+      this.addNewRowWithFocus();
+      return;
+    }
+
+    // 2. Logic for Standard: Add row after 'Disc %'
+    if (!this.isDistributor && fieldType === 'disc' && isLastRow) {
+      this.addNewRowWithFocus();
+      return;
+    }
+
+    // 3. Default behavior: Just move to the next input in the list
     const inputs = this.inputFields.toArray();
     const index = inputs.findIndex((el) => el.nativeElement === event.target);
 
     if (index + 1 < inputs.length) {
       inputs[index + 1].nativeElement.focus();
       inputs[index + 1].nativeElement.select();
-    } else {
-      this.addNewRow();
-      setTimeout(() => {
-        this.inputFields.last.nativeElement.focus();
-      }, 50);
     }
   }
+
+  addNewRowWithFocus() {
+    this.addNewRow();
+    // Wait for Angular to render the new row before trying to focus it
+    setTimeout(() => {
+      this.focusFirstInputOfLastRow();
+    }, 50);
+  }
+
+  focusFirstInputOfLastRow() {
+    const inputs = this.inputFields.toArray();
+
+    // Calculate the index of the 'Stock Category' field in the new row.
+    // In your HTML, Stock Category is the FIRST #inputField of every row.
+    // We need the first input of the LAST row.
+
+    const inputsPerRow = this.isDistributor ? 3 : 6;
+    const targetIndex = inputs.length - inputsPerRow;
+
+    if (inputs[targetIndex]) {
+      inputs[targetIndex].nativeElement.focus();
+    }
+  }
+
+  fetchNextOrderNumber() {
+    const prefix = 'SO-25-26-'; // You could also generate this based on current date
+
+    this.http.get<any[]>('http://localhost:8080/api/v1/sales-orders').subscribe({
+      next: (orders) => {
+        // If no orders exist at all in the DB
+        if (!orders || orders.length === 0) {
+          this.orderNumber = prefix + '001';
+          return;
+        }
+
+        // Extract numeric suffixes from orders that match our prefix
+        const numericParts = orders
+          .map((o) => o.orderNumber)
+          .filter((no) => no && no.startsWith(prefix))
+          .map((no) => {
+            const parts = no.split('-');
+            // If format is SO-25-26-001, parts[3] is '001'
+            return parseInt(parts[parts.length - 1], 10);
+          })
+          .filter((num) => !isNaN(num));
+
+        // Find the highest existing number
+        const maxSuffix = numericParts.length > 0 ? Math.max(...numericParts) : 0;
+
+        // Increment and Pad (0 becomes 001, 1 becomes 002, etc.)
+        const nextSuffix = maxSuffix + 1;
+        this.orderNumber = prefix + nextSuffix.toString().padStart(3, '0');
+      },
+      error: (err) => {
+        console.error('Error fetching order numbers:', err);
+        this.orderNumber = prefix + '001'; // Fallback if API fails
+      },
+    });
+  }
+
+  // ================= SUBMIT DATA =================
+  async createSalesOrder() {
+    const prefix = 'SO-25-26-';
+
+    // 1. Final check against the database to see if this number was taken while we were typing
+    this.http.get<any[]>(`http://localhost:8080/api/v1/sales-orders`).subscribe({
+      next: (orders) => {
+        const isOccupied = orders.some((o) => o.orderNumber === this.orderNumber);
+
+        if (isOccupied) {
+          alert(
+            `Warning: ${this.orderNumber} was just taken by another user. Auto-incrementing...`,
+          );
+          this.fetchNextOrderNumber(); // Refresh to the actual next number
+          return; // Stop the submission so the user can review the new number
+        }
+
+        // 2. Proceed with the Flat Structure loop if not occupied
+        this.proceedToSave();
+      },
+    });
+  }
+
+  // Move your existing saving loop into this helper function
+  proceedToSave() {
+    const validItems = this.items.filter((i) => i.itemName && i.itemQuantity > 0);
+    const currentNo = this.orderNumber;
+
+    validItems.forEach((item, index) => {
+      const payload = {
+        orderNumber: currentNo,
+        ledgerName: this.ledgerName,
+        orderDate: this.formatDateForBackend(this.orderDate),
+        stockCategory: item.stockCategory,
+        itemName: item.itemName,
+        itemQuantity: item.itemQuantity,
+        uom: item.unit,
+        itemRate: item.itemRate,
+        discountPercentage: item.discPercent,
+        vatPercentage: item.vatPercent,
+        narration: this.narration,
+        orderPlacedBy: this.placedBy,
+        orderApprovedBy: this.approvedBy,
+        itemNetRate: this.getNetRate(item),
+        itemNetAmount: this.getAmount(item),
+        totalAmount: this.getTotalAmt(item),
+        grossTotalAmount: this.getGrandTotal(),
+        grossItemQuantity: this.getTotalQty(),
+      };
+
+      this.http.post('http://localhost:8080/api/v1/sales-orders', payload).subscribe({
+        next: (res) => {
+          if (index === validItems.length - 1) {
+            alert('Order Saved Successfully!');
+            this.resetForm();
+            this.fetchNextOrderNumber(); // Prepare for next entry
+          }
+        },
+      });
+    });
+  }
+
+  formatDateForBackend(dateStr: string): string {
+    const parts = dateStr.split('-');
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+
+  // Optional helper to clear form after success
+  resetForm() {
+  this.items = [];
+  this.addNewRow();
+  this.narration = '';
+  this.orderDate = this.getTodayDate();
+  this.placedBy = '';
+  this.approvedBy = '';
+}
 }

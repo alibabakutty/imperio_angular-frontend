@@ -10,12 +10,10 @@
   </div>
 
   <div class="field-bar">
-    <div class="field-item"><span class="label-box">Order No</span> : {{ orderNo }}</div>
+    <div class="field-item"><span class="label-box">Order No</span> : {{ orderNumber }}</div>
     <div class="field-item"><span class="label-box">Party Ledger Name</span> : {{ partyName }}</div>
-    <div class="field-item">
-      <span class="label-box">Purchase Ledger</span> : {{ purchaseLedger }}
-    </div>
-    <div class="field-item"><span class="label-box">Date</span> : {{ date }}</div>
+    <div class="field-item"><span class="label-box">Purchase Ledger</span> : {{ ledgerName }}</div>
+    <div class="field-item"><span class="label-box">Date</span> : {{ orderDate }}</div>
   </div>
 
   <div class="table-wrapper">
@@ -68,9 +66,9 @@
           <td>
             <input
               type="number"
-              [(ngModel)]="item.qty"
+              [(ngModel)]="item.itemQuantity"
               #inputField
-              (keydown.enter)="onEnter($event)"
+              (keydown.enter)="onEnter($event, 'itemQuantity', i)"
             />
           </td>
 
@@ -80,7 +78,7 @@
             <td>
               <input
                 type="number"
-                [(ngModel)]="item.rate"
+                [(ngModel)]="item.itemRate"
                 #inputField
                 (keydown.enter)="onEnter($event)"
               />
@@ -90,7 +88,7 @@
                 type="number"
                 [(ngModel)]="item.discPercent"
                 #inputField
-                (keydown.enter)="onEnter($event)"
+                (keydown.enter)="onEnter($event, 'disc', i)"
               />
             </td>
             <td class="readonly">{{ formatNaira(getNetRate(item)) }}</td>
@@ -140,15 +138,17 @@
       </div>
 
       <div class="approval-info">
-        <span
-          >Order Created By: <b>{{ placedBy }}</b></span
-        >
-        <span
-          >Order Approved By: <b>{{ approvedBy }}</b></span
-        >
+        <div class="input-group">
+          <label>Order Created By:</label>
+          <input [(ngModel)]="placedBy" class="approval-input" />
+        </div>
+        <div class="input-group">
+          <label>Order Approved By:</label>
+          <input [(ngModel)]="approvedBy" class="approval-input" />
+        </div>
       </div>
 
-      <button class="btn-update">CREATE</button>
+      <button class="btn-update" (click)="createSalesOrder()">CREATE</button>
     </div>
   </div>
 </div>

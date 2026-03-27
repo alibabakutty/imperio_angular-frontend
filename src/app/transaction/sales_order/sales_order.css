@@ -100,28 +100,44 @@
 
 .action-footer-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 2px 0; /* Reduced from 8px */
   font-size: 11px;
 }
 
+/* Container for the label and input pair */
 .approval-info {
   display: flex;
-  gap: 40px;
-  align-items: center;
+  gap: 10px;
+  /* align-items: center; */
   flex: 2;
   justify-content: center;
 }
 
+/* Styling the new approval inputs */
+.approval-input {
+  border: 1px solid #999;
+  background: #fdfdf0;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  width: 120px; /* Adjust width as needed */
+  text-align: left;
+  font-weight: bold;
+  color: #000;
+}
+
 .narration-input {
   flex: 1;
+  width: 400px;
   border: 1px solid #999;
   background: #fdfdf0;
   height: 18px; /* Matching table row height */
-  padding: 0 100px;
+  padding: 0 5px;
   font-size: 11px;
   margin-left: 2px;
+  text-align: left;
 }
 
 .btn-update {
@@ -177,3 +193,5 @@
   background: #2c5697;
   color: white;
 }
+
+
