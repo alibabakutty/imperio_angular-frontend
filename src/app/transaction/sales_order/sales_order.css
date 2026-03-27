@@ -81,7 +81,7 @@
 .total-row {
   display: grid;
   /* Exact match to table: 40%(Label) | 8%(Qty) | 5%(Per) | 10%(Rate) | 5%(Disc) | 10%(Net) | 10%(Amt) | 5%(VAT) | 10%(Total) */
-  grid-template-columns: 40% 8% 5% 10% 5% 10% 10% 5% 7%; 
+  grid-template-columns: 40% 8% 5% 10% 5% 10% 10% 5% 7%;
   font-weight: bold;
   font-size: 11px;
   background: #e6e6bc;
@@ -95,7 +95,7 @@
   align-items: center;
   padding-right: 5px;
   height: 20px;
-  border-left: 1px solid rgba(0,0,0,0.1); /* Thin vertical separators */
+  border-left: 1px solid rgba(0, 0, 0, 0.1); /* Thin vertical separators */
 }
 
 .action-footer-row {
@@ -107,11 +107,11 @@
 }
 
 .approval-info {
-    display: flex;
-    gap: 40px;
-    align-items: center;
-    flex: 2;
-    justify-content: center;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  flex: 2;
+  justify-content: center;
 }
 
 .narration-input {
@@ -144,4 +144,36 @@
   height: 100%;
   font-size: 12px;
   line-height: 1;
+}
+
+.dropdown-cell {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  background: #e6e6e6;
+  border: 1px solid #999;
+  z-index: 999;
+}
+
+.dropdown-item {
+  padding: 3px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item:hover {
+  background: #b0c4de;
+}
+
+.dropdown-item.active {
+  background: #2c5697;
+  color: white;
 }

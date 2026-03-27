@@ -38,57 +38,72 @@
       <tbody>
         <tr *ngFor="let item of items; let i = index">
           <td class="center">{{ i + 1 }}</td>
-          <td>
+
+          <td class="dropdown-cell">
             <input
               [(ngModel)]="item.stockCategory"
+              (focus)="openDropdown(i)"
+              (input)="filterItems($event.target.value)"
+              (keydown)="handleKeyDown($event, item)"
               #inputField
-              (keydown.enter)="onEnter($event, i * 7)"
             />
+
+            <div class="dropdown" *ngIf="activeSearchIndex === i">
+              <div
+                #dropdownItem
+                class="dropdown-item"
+                *ngFor="let p of filteredItems; let idx = index"
+                [class.active]="idx === highlightedIndex"
+                (click)="selectProduct(item, p)"
+              >
+                {{ p.stockItemCategory }} - {{ p.stockItemName }}
+              </div>
+            </div>
           </td>
+
           <td>
-            <input
-              [(ngModel)]="item.itemName"
-              #inputField
-              (keydown.enter)="onEnter($event, i * 7 + 1)"
-            />
+            <input [(ngModel)]="item.itemName" #inputField (keydown.enter)="onEnter($event)" />
           </td>
-          <td class="right">
+
+          <td>
             <input
               type="number"
               [(ngModel)]="item.qty"
               #inputField
-              (keydown.enter)="onEnter($event, i * 7 + 2)"
+              (keydown.enter)="onEnter($event)"
             />
           </td>
+
           <td class="center">{{ item.unit }}</td>
+
           <ng-container *ngIf="!isDistributor">
-            <td class="right">
+            <td>
               <input
                 type="number"
                 [(ngModel)]="item.rate"
                 #inputField
-                (keydown.enter)="onEnter($event, i * 7 + 3)"
+                (keydown.enter)="onEnter($event)"
               />
             </td>
-            <td class="right">
+            <td>
               <input
                 type="number"
                 [(ngModel)]="item.discPercent"
                 #inputField
-                (keydown.enter)="onEnter($event, i * 7 + 4)"
+                (keydown.enter)="onEnter($event)"
               />
             </td>
-            <td class="right readonly">{{ formatNaira(getNetRate(item)) }}</td>
-            <td class="right readonly">{{ formatNaira(getAmount(item)) }}</td>
-            <td class="right">
+            <td class="readonly">{{ formatNaira(getNetRate(item)) }}</td>
+            <td class="readonly">{{ formatNaira(getAmount(item)) }}</td>
+            <td>
               <input
                 type="number"
                 [(ngModel)]="item.vatPercent"
                 #inputField
-                (keydown.enter)="onEnter($event, i * 7 + 5)"
+                (keydown.enter)="onEnter($event)"
               />
             </td>
-            <td class="right bold readonly">{{ formatNaira(getTotalAmt(item)) }}</td>
+            <td class="bold readonly">{{ formatNaira(getTotalAmt(item)) }}</td>
           </ng-container>
         </tr>
       </tbody>
