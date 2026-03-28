@@ -52,6 +52,7 @@
   font-size: 11px;
   padding: 1px 3px; /* Minimal padding */
   height: 20px;
+  text-align: center;
 }
 
 .data-table td {
@@ -201,6 +202,11 @@
 .dropdown-item.active {
   background: #2c5697;
   color: white;
+}
+
+.text-right {
+  text-align: right !important;
+  padding-right: 8px !important;
 }
 
 

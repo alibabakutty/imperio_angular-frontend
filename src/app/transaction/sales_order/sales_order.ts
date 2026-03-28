@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { LoginService } from '../../login/loginservice';
 import { HttpClient } from '@angular/common/http';
 
@@ -34,7 +34,7 @@ interface OrderItem {
 export class SalesOrderComponent implements OnInit, OnDestroy {
   // Header
   orderNumber = 'Loading....';
-  partyName = 'sriram';
+  partyName = '';
   ledgerName = 'VAT Purchase A/c';
   orderDate = this.getTodayDate();
   narration = '';
@@ -48,9 +48,10 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   activeSearchIndex: number | null = null;
 
   filteredItems: any[] = [];
-  highlightedIndex: number = -1;
+  highlightedIndex: number = 0;
 
   private roleSub!: Subscription;
+  private userSub!: Subscription;
 
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>;
   @ViewChildren('dropdownItem') dropdownItems!: QueryList<ElementRef>;
@@ -68,20 +69,31 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     this.roleSub = this.loginService.role$.subscribe((role) => {
       this.isDistributor = role === 'distributor';
     });
+
+    this.userSub = this.loginService.user$.subscribe((username) => {
+      if (username) {
+        this.partyName = username;
+        // automatically set 'order created by' if it's currently empty
+        if (!this.placedBy) {
+          this.placedBy = username;
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
     this.roleSub?.unsubscribe();
+    this.userSub?.unsubscribe();
   }
 
   getTodayDate(): string {
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-  const year = now.getFullYear();
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = now.getFullYear();
 
-  return `${day}-${month}-${year}`;
-}
+    return `${day}-${month}-${year}`;
+  }
 
   // ================= API =================
   fetchStockItems() {
@@ -328,8 +340,6 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
 
   // ================= SUBMIT DATA =================
   async createSalesOrder() {
-    const prefix = 'SO-25-26-';
-
     // 1. Final check against the database to see if this number was taken while we were typing
     this.http.get<any[]>(`http://localhost:8080/api/v1/sales-orders`).subscribe({
       next: (orders) => {
@@ -352,9 +362,15 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   // Move your existing saving loop into this helper function
   proceedToSave() {
     const validItems = this.items.filter((i) => i.itemName && i.itemQuantity > 0);
+
+    if (validItems.length === 0) {
+      alert("Please add at least one valid item.");
+      return;
+    }
     const currentNo = this.orderNumber;
 
-    validItems.forEach((item, index) => {
+    // create an array of observable (POST request)
+    const requests = validItems.map((item) => {
       const payload = {
         orderNumber: currentNo,
         ledgerName: this.ledgerName,
@@ -375,17 +391,21 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
         grossTotalAmount: this.getGrandTotal(),
         grossItemQuantity: this.getTotalQty(),
       };
-
-      this.http.post('http://localhost:8080/api/v1/sales-orders', payload).subscribe({
-        next: (res) => {
-          if (index === validItems.length - 1) {
-            alert('Order Saved Successfully!');
-            this.resetForm();
-            this.fetchNextOrderNumber(); // Prepare for next entry
-          }
-        },
-      });
+      return this.http.post('http://localhost:8080/api/v1/sales-orders', payload);
     });
+
+    // execute all requests and await for compilation
+    forkJoin(requests).subscribe({
+      next: () => {
+        alert('Order saved successfully!');
+        this.resetForm();
+        this.fetchNextOrderNumber();
+      },
+      error: (err) => {
+        console.error('Error saving order:', err);
+        alert('An error occured while saving the order.');
+      }
+    })
   }
 
   formatDateForBackend(dateStr: string): string {
@@ -395,11 +415,30 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
 
   // Optional helper to clear form after success
   resetForm() {
-  this.items = [];
-  this.addNewRow();
-  this.narration = '';
-  this.orderDate = this.getTodayDate();
-  this.placedBy = '';
-  this.approvedBy = '';
-}
+    // reset the items array to a single empty row
+    this.items = [{
+      stockCategory: '',
+      itemName: '',
+      itemQuantity: 0,
+      unit: 'pcs',
+      itemRate: 0,
+      discPercent: 0,
+      vatPercent: 0
+    }];
+    // clear footer/header fields
+    this.narration = '';
+    this.approvedBy = '';
+    this.orderDate = this.getTodayDate();
+    // keep the current user as placedby instead of making it empty
+    this.placedBy = this.partyName;
+    // reset UI states
+    this.activeSearchIndex = null;
+    this.highlightedIndex = 0;
+    // refocus the first input after a tiny delay
+    setTimeout(() => {
+      if (this.inputFields && this.inputFields.first) {
+        this.inputFields.first.nativeElement.focus();
+      }
+    }, 100);
+  }
 }
