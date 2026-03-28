@@ -110,7 +110,17 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   openDropdown(index: number) {
     this.activeSearchIndex = index;
     this.filteredItems = [...this.stockItems];
-    this.highlightedIndex = -1;
+    // get the current item's name to find its position in the list
+    const currentItemName = this.items[index].itemName;
+
+    if (currentItemName) {
+      const foundIndex = this.filteredItems.findIndex(
+        p => p.stockItemName === currentItemName
+      );
+    } else {
+      this.highlightedIndex = 0;
+    }
+    setTimeout(() => this.scrollToActive(), 0);
   }
 
   filterItems(value: string) {
@@ -120,7 +130,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
       `${p.stockItemCategory} - ${p.stockItemName}`.toLowerCase().includes(val),
     );
 
-    this.highlightedIndex = -1;
+    this.highlightedIndex = this.filteredItems.length > 0 ? 0 : -1;
     setTimeout(() => this.scrollToActive(), 0);
   }
 
