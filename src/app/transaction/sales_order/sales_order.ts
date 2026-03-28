@@ -245,9 +245,13 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       const inputs = this.inputFields.toArray();
-      // In Distributor mode, there are 3 inputs per row: Category, Name, Qty
-      // The Qty input is the 3rd one (index 2) in that row
-      const qtyInputIndex = this.items.indexOf(item) * 3 + 2;
+      const rowIndex = this.items.indexOf(item);
+      // Standard mode has 6 inputs (#inputField) per row.
+      // Distributor mode has 3 inputs (#inputField) per row.
+      const inputsPerRow = this.isDistributor ? 3 : 6;
+      // In both modes, "Qty" is the 3rd input in the row (index 2 relative to row start)
+      const qtyInputIndex = (rowIndex * inputsPerRow) + 2;
+      
       if (inputs[qtyInputIndex]) {
         inputs[qtyInputIndex].nativeElement.focus();
         inputs[qtyInputIndex].nativeElement.select();

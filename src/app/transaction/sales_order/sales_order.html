@@ -109,7 +109,7 @@
                 type="text"
                 [(ngModel)]="item.vatPercent"
                 #inputField
-                (keydown.enter)="onEnter($event)"
+                (keydown.enter)="onEnter($event, 'vatPercent', i)"
                 class="text-right"
               />
             </td>
