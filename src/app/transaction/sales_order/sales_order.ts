@@ -6,6 +6,7 @@ import {
   ElementRef,
   OnDestroy,
   HostListener,
+  AfterViewInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +32,7 @@ interface OrderItem {
   templateUrl: './sales_order.html',
   styleUrls: ['./sales_order.css'],
 })
-export class SalesOrderComponent implements OnInit, OnDestroy {
+export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   // Header
   orderNumber = 'Loading....';
   partyName = '';
@@ -81,6 +82,19 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.focusFirstInput();
+    }, 100);
+  }
+
+  focusFirstInput() {
+    const firstInput = this.inputFields?.first;
+    if (firstInput) {
+      firstInput.nativeElement.focus();
+    }
+  }
+
   ngOnDestroy() {
     this.roleSub?.unsubscribe();
     this.userSub?.unsubscribe();
@@ -114,9 +128,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     const currentItemName = this.items[index].itemName;
 
     if (currentItemName) {
-      const foundIndex = this.filteredItems.findIndex(
-        p => p.stockItemName === currentItemName
-      );
+      const foundIndex = this.filteredItems.findIndex((p) => p.stockItemName === currentItemName);
     } else {
       this.highlightedIndex = 0;
     }
@@ -206,6 +218,17 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     item.vatPercent = Number(activeRate?.vatPercentage) || 0;
 
     this.closeDropdown();
+
+    setTimeout(() => {
+    const inputs = this.inputFields.toArray();
+    // In Distributor mode, there are 3 inputs per row: Category, Name, Qty
+    // The Qty input is the 3rd one (index 2) in that row
+    const qtyInputIndex = (this.items.indexOf(item) * 3) + 2;
+    if (inputs[qtyInputIndex]) {
+      inputs[qtyInputIndex].nativeElement.focus();
+      inputs[qtyInputIndex].nativeElement.select();
+    }
+  }, 50);
   }
 
   // ================= CALCULATIONS =================
@@ -370,7 +393,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     const validItems = this.items.filter((i) => i.itemName && i.itemQuantity > 0);
 
     if (validItems.length === 0) {
-      alert("Please add at least one valid item.");
+      alert('Please add at least one valid item.');
       return;
     }
     const currentNo = this.orderNumber;
@@ -410,8 +433,8 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error saving order:', err);
         alert('An error occured while saving the order.');
-      }
-    })
+      },
+    });
   }
 
   formatDateForBackend(dateStr: string): string {
@@ -422,15 +445,17 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
   // Optional helper to clear form after success
   resetForm() {
     // reset the items array to a single empty row
-    this.items = [{
-      stockCategory: '',
-      itemName: '',
-      itemQuantity: 0,
-      unit: 'pcs',
-      itemRate: 0,
-      discPercent: 0,
-      vatPercent: 0
-    }];
+    this.items = [
+      {
+        stockCategory: '',
+        itemName: '',
+        itemQuantity: 0,
+        unit: 'pcs',
+        itemRate: 0,
+        discPercent: 0,
+        vatPercent: 0,
+      },
+    ];
     // clear footer/header fields
     this.narration = '';
     this.approvedBy = '';
@@ -440,11 +465,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
     // reset UI states
     this.activeSearchIndex = null;
     this.highlightedIndex = 0;
-    // refocus the first input after a tiny delay
-    setTimeout(() => {
-      if (this.inputFields && this.inputFields.first) {
-        this.inputFields.first.nativeElement.focus();
-      }
-    }, 100);
+    // Re-focus the first field
+    setTimeout(() => this.focusFirstInput(), 100);
   }
 }
