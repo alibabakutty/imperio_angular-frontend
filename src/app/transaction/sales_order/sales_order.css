@@ -2,7 +2,7 @@
 .tally-container {
   background-color: #fffaf4;
   font-family: Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   height: 91.5vh;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   color: white;
   display: flex;
   padding: 1px 10px;
-  font-size: 11px;
+  font-size: 12px;
   align-items: center;
 }
 
@@ -55,7 +55,7 @@
 .data-table th {
   background: #b0c4de;
   border: 1px solid #000;
-  font-size: 11px;
+  font-size: 12px;
   padding: 1px 3px;
   height: 20px;
   text-align: center;
@@ -73,7 +73,7 @@
   border: none;
   background: transparent;
   padding: 0 4px;
-  font-size: 11px;
+  font-size: 12px;
   box-sizing: border-box;
 }
 
@@ -103,7 +103,7 @@ input::-webkit-inner-spin-button {
   display: flex;
   width: 100%;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 12px;
   background: #e6e6bc;
   border-bottom: 1px solid #000;
 }
@@ -134,7 +134,7 @@ input::-webkit-inner-spin-button {
   display: flex;
   align-items: center;
   padding: 4px 10px;
-  font-size: 11px;
+  font-size: 12px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -156,7 +156,7 @@ input::-webkit-inner-spin-button {
   background: #fdfdf0;
   height: 20px;
   padding: 0 5px;
-  font-size: 11px;
+  font-size: 12px;
   box-sizing: border-box;
 }
 
@@ -168,7 +168,7 @@ input::-webkit-inner-spin-button {
   color: white;
   border: none;
   padding: 0 20px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
   cursor: pointer;
   height: 22px;
@@ -185,7 +185,7 @@ input::-webkit-inner-spin-button {
   position: absolute;
   top: 100%;
   left: 0;
-  width: 100%;
+  width: 350%;
   max-height: 160px;
   overflow-y: auto;
   background: #fff;

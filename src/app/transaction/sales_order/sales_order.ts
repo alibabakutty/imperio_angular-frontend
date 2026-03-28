@@ -41,15 +41,13 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   narration = '';
   placedBy = '';
   approvedBy = '';
-
   items: OrderItem[] = [];
   stockItems: any[] = [];
-
   isDistributor = false;
   activeSearchIndex: number | null = null;
-
   filteredItems: any[] = [];
   highlightedIndex: number = 0;
+  focusedCell: string | null = null;
 
   private roleSub!: Subscription;
   private userSub!: Subscription;
@@ -194,6 +192,32 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeSearchIndex = null;
   }
 
+  handleFocus(index: number, field: string) {
+    this.focusedCell = index + '-' + field;
+  }
+
+  handleBlur(index: number, field: keyof OrderItem, event: any) {
+    this.focusedCell = null;
+
+    // Get the value from the input
+    const inputValue = event.target.value;
+    const val = parseFloat(inputValue);
+
+    // Use a type-safe assignment
+    // We check if the field exists in our item before assigning
+    if (this.items[index]) {
+      (this.items[index] as any)[field] = isNaN(val) ? 0 : val;
+    }
+  }
+
+  formatToNaira(value: any): string {
+    const num = parseFloat(value) || 0;
+    return `₦ ${num.toLocaleString('en-NG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+
   @HostListener('document:click', ['$event'])
   handleOutsideClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -220,15 +244,15 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.closeDropdown();
 
     setTimeout(() => {
-    const inputs = this.inputFields.toArray();
-    // In Distributor mode, there are 3 inputs per row: Category, Name, Qty
-    // The Qty input is the 3rd one (index 2) in that row
-    const qtyInputIndex = (this.items.indexOf(item) * 3) + 2;
-    if (inputs[qtyInputIndex]) {
-      inputs[qtyInputIndex].nativeElement.focus();
-      inputs[qtyInputIndex].nativeElement.select();
-    }
-  }, 50);
+      const inputs = this.inputFields.toArray();
+      // In Distributor mode, there are 3 inputs per row: Category, Name, Qty
+      // The Qty input is the 3rd one (index 2) in that row
+      const qtyInputIndex = this.items.indexOf(item) * 3 + 2;
+      if (inputs[qtyInputIndex]) {
+        inputs[qtyInputIndex].nativeElement.focus();
+        inputs[qtyInputIndex].nativeElement.select();
+      }
+    }, 50);
   }
 
   // ================= CALCULATIONS =================
@@ -290,25 +314,38 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const isLastRow = rowIndex === this.items.length - 1;
 
-    // 1. Logic for Distributor: Add row after 'Qty'
-    if (this.isDistributor && fieldType === 'itemQuantity' && isLastRow) {
+    // 1. Check if we should add a new row
+    // For Distributor: Add after Qty
+    const shouldAddDistributor = this.isDistributor && fieldType === 'itemQuantity';
+    // For Standard: Add after VAT % (the last input in the row)
+    const shouldAddStandard = !this.isDistributor && fieldType === 'vatPercent';
+
+    if (isLastRow && (shouldAddDistributor || shouldAddStandard)) {
       this.addNewRowWithFocus();
       return;
     }
 
-    // 2. Logic for Standard: Add row after 'Disc %'
-    if (!this.isDistributor && fieldType === 'disc' && isLastRow) {
-      this.addNewRowWithFocus();
-      return;
-    }
-
-    // 3. Default behavior: Just move to the next input in the list
+    // 2. Otherwise, just move to the next available input
     const inputs = this.inputFields.toArray();
     const index = inputs.findIndex((el) => el.nativeElement === event.target);
 
-    if (index + 1 < inputs.length) {
+    if (index !== -1 && index + 1 < inputs.length) {
       inputs[index + 1].nativeElement.focus();
-      inputs[index + 1].nativeElement.select();
+      // Use select() to highlight text for easier overwriting
+      if (inputs[index + 1].nativeElement.select) {
+        inputs[index + 1].nativeElement.select();
+      }
+    }
+  }
+
+  focusFirstInputOfLastRow() {
+    const inputs = this.inputFields.toArray();
+    // The first input of the last row is always (Total Inputs - Inputs In One Row)
+    const inputsPerRow = this.isDistributor ? 3 : 6;
+    const targetIndex = inputs.length - inputsPerRow;
+
+    if (inputs[targetIndex]) {
+      inputs[targetIndex].nativeElement.focus();
     }
   }
 
@@ -318,17 +355,6 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.focusFirstInputOfLastRow();
     }, 50);
-  }
-
-  focusFirstInputOfLastRow() {
-    const inputs = this.inputFields.toArray();
-    // in admin 6 inputs per row, in distributor 3 inputs per row
-    const inputsPerRow = this.isDistributor ? 3 : 6;
-    const targetIndex = inputs.length - inputsPerRow;
-
-    if (inputs[targetIndex]) {
-      inputs[targetIndex].nativeElement.focus();
-    }
   }
 
   fetchNextOrderNumber() {

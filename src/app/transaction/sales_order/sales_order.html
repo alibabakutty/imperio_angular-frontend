@@ -62,7 +62,11 @@
           </td>
 
           <td>
-            <input [(ngModel)]="item.itemName" #inputField (keydown.enter)="onEnter($event)" />
+            <input
+              [(ngModel)]="item.itemName"
+              #inputField
+              (keydown.enter)="onEnter($event, 'itemName', i)"
+            />
           </td>
 
           <td>
@@ -81,10 +85,12 @@
             <td>
               <input
                 type="text"
-                [(ngModel)]="item.itemRate"
                 #inputField
-                (keydown.enter)="onEnter($event)"
                 class="text-right"
+                [value]="focusedCell === i + '-rate' ? item.itemRate : formatToNaira(item.itemRate)"
+                (focus)="handleFocus(i, 'rate')"
+                (blur)="handleBlur(i, 'itemRate', $event)"
+                (keydown.enter)="onEnter($event, 'itemRate', i)"
               />
             </td>
             <td>
