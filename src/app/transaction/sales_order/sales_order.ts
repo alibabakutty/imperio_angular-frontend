@@ -245,7 +245,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
       stockCategory: '',
       itemName: '',
       itemQuantity: 0,
-      unit: 'Pcs',
+      unit: 'PCS',
       itemRate: 0,
       discPercent: 0,
       vatPercent: 0,
@@ -289,11 +289,7 @@ export class SalesOrderComponent implements OnInit, OnDestroy {
 
   focusFirstInputOfLastRow() {
     const inputs = this.inputFields.toArray();
-
-    // Calculate the index of the 'Stock Category' field in the new row.
-    // In your HTML, Stock Category is the FIRST #inputField of every row.
-    // We need the first input of the LAST row.
-
+    // in admin 6 inputs per row, in distributor 3 inputs per row
     const inputsPerRow = this.isDistributor ? 3 : 6;
     const targetIndex = inputs.length - inputsPerRow;
 

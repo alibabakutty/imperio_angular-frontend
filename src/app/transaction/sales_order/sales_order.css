@@ -2,7 +2,7 @@
 .tally-container {
   background-color: #fffaf4;
   font-family: Arial, sans-serif;
-  font-size: 11px; /* Matching Table Header size */
+  font-size: 11px;
   height: 91.5vh;
   display: flex;
   flex-direction: column;
@@ -13,13 +13,13 @@
   background: #2c5697;
   color: white;
   display: flex;
-  padding: 1px 10px; /* Reduced padding */
+  padding: 1px 10px;
   font-size: 11px;
   align-items: center;
 }
 
 .company-name {
-  margin-left: auto; /* More reliable than fixed margins */
+  margin-left: auto;
   margin-right: auto;
 }
 
@@ -32,7 +32,7 @@
 .field-bar {
   background: #b0c4de;
   display: flex;
-  padding: 2px 10px; /* Thinner bar */
+  padding: 2px 10px;
   gap: 20px;
   border-bottom: 1px solid #000;
   justify-content: space-between;
@@ -45,12 +45,18 @@
   font-weight: bold;
 }
 
-/* 3. High-Density Table */
+/* 3. Table Logic with Static Widths */
+.data-table {
+  width: 100%;
+  table-layout: fixed; /* Crucial for respecting pixel widths */
+  border-collapse: collapse;
+}
+
 .data-table th {
   background: #b0c4de;
   border: 1px solid #000;
   font-size: 11px;
-  padding: 1px 3px; /* Minimal padding */
+  padding: 1px 3px;
   height: 20px;
   text-align: center;
 }
@@ -58,7 +64,7 @@
 .data-table td {
   border: 1px solid #000;
   padding: 0;
-  height: 18px; /* Thinner rows */
+  height: 18px;
 }
 
 .data-table input {
@@ -67,44 +73,70 @@
   border: none;
   background: transparent;
   padding: 0 4px;
-  font-size: 11px; /* Same as header */
+  font-size: 11px;
+  box-sizing: border-box;
 }
 
-/* 4. Slimming the Footer */
+/* Hide Spinners for all numeric inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* 4. Footer & Grand Total Alignment */
 .footer-totals {
   background: #e6e6bc;
   border-top: 1px solid #000;
-  padding: 2px 10px; /* Reduced from 5px */
+  padding: 0; /* Removing padding to let grid span full width */
   flex-shrink: 0;
   margin-top: auto;
 }
 
+/* The total-row must match the THEAD widths exactly.
+   Assuming widths: S.No (40px), Category (15%), Name (25%), Qty (10%), Per (50px), etc.
+*/
 .total-row {
-  display: grid;
-  /* Exact match to table: 40%(Label) | 8%(Qty) | 5%(Per) | 10%(Rate) | 5%(Disc) | 10%(Net) | 10%(Amt) | 5%(VAT) | 10%(Total) */
-  grid-template-columns: 40% 8% 5% 10% 5% 10% 10% 5% 7%;
+  display: flex;
+  width: 100%;
   font-weight: bold;
   font-size: 11px;
   background: #e6e6bc;
   border-bottom: 1px solid #000;
 }
 
-/* Align values to the right to match table data */
 .total-row span {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding-right: 5px;
-  height: 20px;
-  border-left: 1px solid rgba(0, 0, 0, 0.1); /* Thin vertical separators */
+  height: 22px;
+  border-right: 1px solid #000;
+  box-sizing: border-box;
 }
 
+/* Matching Table Column Widths for Footer Spans */
+.col-label { width: calc(40px + 15% + 25%); justify-content: flex-start !important; padding-left: 10px; }
+.col-qty   { width: 10%; }
+.col-per   { width: 50px; }
+.col-rate  { width: 10%; }
+.col-disc  { width: 8%; }
+.col-net   { width: 10%; }
+.col-amt   { width: 12%; }
+.col-vat   { width: 8%; }
+.col-total { width: 12%; border-right: none !important; }
+
+/* 5. Action Area */
 .action-footer-row {
   display: flex;
   align-items: center;
-  padding: 2px 0; /* Reduced from 8px */
+  padding: 4px 10px;
   font-size: 11px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .narration-group {
@@ -112,70 +144,43 @@
   align-items: center;
 }
 
-/* Container for the label and input pair */
 .approval-info {
   display: flex;
   gap: 15px;
   margin-left: auto;
-  margin-right: 40px;
-  width: 50%;
+  width: 700px;
 }
 
-.input-group {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* Styling the new approval inputs */
-.approval-input {
+.approval-input, .narration-input {
   border: 1px solid #999;
   background: #fdfdf0;
-  height: 18px;
+  height: 20px;
   padding: 0 5px;
   font-size: 11px;
-  width: 200px; /* Adjust width as needed */
-  font-weight: bold;
-  color: #000;
+  box-sizing: border-box;
 }
 
-.narration-input {
-  width: 400px;
-  border: 1px solid #999;
-  background: #fdfdf0;
-  height: 18px; /* Matching table row height */
-  padding: 0 5px;
-  font-size: 11px;
-  margin-left: 2px;
-  text-align: left;
-}
+.narration-input { width: 350px; }
+.approval-input { width: 150px; font-weight: bold; }
 
 .btn-update {
   background: #228b22;
   color: white;
   border: none;
-  padding: 2px 15px; /* Thinner button */
+  padding: 0 20px;
   font-size: 11px;
   font-weight: bold;
   cursor: pointer;
-  height: 20px;
+  height: 22px;
+  margin-left: 20px;
 }
 
-/* Action Button in Table */
-.btn-add {
-  background: #2c5697;
-  color: white;
-  border: none;
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  line-height: 1;
-}
+/* UI Helpers */
+.center { text-align: center; }
+.text-right { text-align: right !important; padding-right: 8px !important; }
+.readonly { background-color: #f0f0f0; color: #333; }
 
-.dropdown-cell {
-  position: relative;
-}
-
+.dropdown-cell { position: relative; }
 .dropdown {
   position: absolute;
   top: 100%;
@@ -183,30 +188,15 @@
   width: 100%;
   max-height: 160px;
   overflow-y: auto;
-  background: #e6e6e6;
-  border: 1px solid #999;
+  background: #fff;
+  border: 1px solid #000;
   z-index: 999;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
 .dropdown-item {
-  padding: 3px 6px;
-  font-size: 11px;
+  padding: 4px 6px;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
-  border-bottom: 1px solid #ccc;
 }
-
-.dropdown-item:hover {
-  background: #b0c4de;
-}
-
-.dropdown-item.active {
-  background: #2c5697;
-  color: white;
-}
-
-.text-right {
-  text-align: right !important;
-  padding-right: 8px !important;
-}
-
-
+.dropdown-item.active { background: #2c5697; color: white; }
