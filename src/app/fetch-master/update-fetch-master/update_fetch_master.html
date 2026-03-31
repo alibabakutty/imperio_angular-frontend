@@ -6,7 +6,6 @@
   </div>
 
   <div class="table-wrapper">
-
     <!-- Loader -->
     @if (loading) {
       <div class="loader">Loading...</div>
@@ -24,16 +23,20 @@
         </thead>
 
         <tbody>
-          @for (item of (groups$ | async); track item.code) {
+          @for (item of groups$ | async; track item.code) {
             <tr (click)="navigateToDetail(item)">
               @for (key of dataKeys; track key) {
-                <td>{{ item[key] }}</td>
+                <td [class.text-right]="key === 'rate'">
+                  @if (key === 'rate') {
+                    {{ formatToNaira(item[key]) }}
+                  } @else {
+                    {{ item[key] }}
+                  }
+                </td>
               }
             </tr>
           }
         </tbody>
-
-        
       </table>
     }
   </div>

@@ -92,3 +92,8 @@
 .status-cell {
   font-weight: bold;
 }
+
+/* Target only the Party Name column if you know the key */
+.capitalize-text {
+  text-transform: uppercase;
+}

@@ -74,8 +74,8 @@ export class App implements OnInit {
           this.focusedIndex = (this.focusedIndex <= 0) ? 1 : 0;
           break;
         case 'Enter':
-          if (this.focusedIndex === 0) this.onLogin('direct');
-          if (this.focusedIndex === 1) this.onLogin('distributor');
+          if (this.focusedIndex === 0) this.onLogin('admin');
+          if (this.focusedIndex === 1) this.onLogin('user');
           break;
         case 'Escape':
           this.toggleDropdown(false);
@@ -94,10 +94,12 @@ export class App implements OnInit {
     }
   }
 
-  onLogin(userType: 'distributor' | 'direct') {
+  onLogin(userType: 'admin' | 'user') {
     this.isDropdownOpen = false;
     this.focusedIndex = -1;
-    this.router.navigate(['/login'], { queryParams: { role: userType } });
+    this.router.navigate(['/login'], { 
+      queryParams: { role: userType } 
+    });
   }
 
   logout() {

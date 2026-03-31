@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { App } from '../app';
 import { Tally } from '../tally/tally';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 
 @Component({
   selector: 'app-menu',
@@ -18,6 +18,7 @@ export class Menu implements OnInit {
     private router: Router,
     private app: App,
     private tally: Tally,
+    private location: Location,
   ) {
     this.app.IsValid = false;
   }
@@ -27,17 +28,18 @@ export class Menu implements OnInit {
   }
 
   routepath(item: any) {
-    if (typeof item === 'string') {
-      if(item === 'login') this.router.navigate(['/login']);
+    // 3. Handle the 'login' string or 'quit' action
+    if (item === 'login') {
+      this.location.back(); // Goes to the previous page in history
       return;
     }
 
     if (item.path === 'submenu') {
       this.router.navigate(['/submenu'], {
-        queryParams: { title: item.label }
+        queryParams: { title: item.label },
       });
     } else {
-      this.router.navigate([`/sales_order_create`]);
+      this.router.navigate([`/${item.path}`]);
     }
   }
 }

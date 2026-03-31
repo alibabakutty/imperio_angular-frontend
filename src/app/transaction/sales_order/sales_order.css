@@ -1,4 +1,4 @@
-/* Standardize Global Font */
+/* ---------- GLOBAL ---------- */
 .tally-container {
   background-color: #fffaf4;
   font-family: Arial, sans-serif;
@@ -8,13 +8,12 @@
   flex-direction: column;
 }
 
-/* 1. Slimming the Nav Bars */
+/* ---------- NAV ---------- */
 .nav-bar {
   background: #2c5697;
   color: white;
   display: flex;
   padding: 1px 10px;
-  font-size: 12px;
   align-items: center;
 }
 
@@ -28,7 +27,7 @@
   gap: 15px;
 }
 
-/* 2. Slimming the Field Bar */
+/* ---------- FIELD BAR ---------- */
 .field-bar {
   background: #b0c4de;
   display: flex;
@@ -45,17 +44,23 @@
   font-weight: bold;
 }
 
-/* 3. Table Logic with Static Widths */
+/* ---------- TABLE ---------- */
 .data-table {
   width: 100%;
-  table-layout: fixed; /* Crucial for respecting pixel widths */
+  /* table-layout: fixed; */
   border-collapse: collapse;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: visible; /* Ensure dropdowns aren't cut off horizontally */
+  position: relative;
 }
 
 .data-table th {
   background: #b0c4de;
   border: 1px solid #000;
-  font-size: 12px;
   padding: 1px 3px;
   height: 20px;
   text-align: center;
@@ -73,70 +78,96 @@
   border: none;
   background: transparent;
   padding: 0 4px;
-  font-size: 12px;
   box-sizing: border-box;
 }
 
-/* Hide Spinners for all numeric inputs */
+/* Remove number arrows */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-/* input[type=number] {
-  -moz-appearance: textfield;
-} */
 
-/* 4. Footer & Grand Total Alignment */
+/* ---------- FOOTER ---------- */
 .footer-totals {
   background: #e6e6bc;
   border-top: 1px solid #000;
-  padding: 0; /* Removing padding to let grid span full width */
-  flex-shrink: 0;
   margin-top: auto;
 }
 
-/* The total-row must match the THEAD widths exactly.
-   Assuming widths: S.No (40px), Category (15%), Name (25%), Qty (10%), Per (50px), etc.
-*/
 .total-row {
   display: flex;
   width: 100%;
   font-weight: bold;
-  font-size: 12px;
-  background: #e6e6bc;
   border-bottom: 1px solid #000;
 }
 
 .total-row span {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-end;
   padding-right: 5px;
   height: 22px;
   border-right: 1px solid #000;
   box-sizing: border-box;
 }
 
-/* Matching Table Column Widths for Footer Spans */
-.col-label { width: calc(40px + 15% + 25%); justify-content: flex-start !important; padding-left: 10px; }
-.col-qty   { width: 10%; }
-.col-per   { width: 50px; }
-.col-rate  { width: 10%; }
-.col-disc  { width: 8%; }
-.col-net   { width: 10%; }
-.col-amt   { width: 12%; }
-.col-vat   { width: 8%; }
-.col-total { width: 12%; border-right: none !important; }
+/* ---------- ADMIN VIEW (DEFAULT) ---------- */
+.total-row:not(.user-view) .col-sno-category-name {
+  width: 43%;
+  justify-content: flex-start;
+  padding-left: 10px;
+}
 
-/* 5. Action Area */
+.total-row:not(.user-view) .col-qty { width: 10%; }
+.total-row:not(.user-view) .col-per { width: 3%; }
+
+.total-row:not(.user-view) .col-rate { width: 8%; }
+.total-row:not(.user-view) .col-disc { width: 4%; }
+.total-row:not(.user-view) .col-net { width: 8%; }
+.total-row:not(.user-view) .col-amt { width: 10%; }
+.total-row:not(.user-view) .col-vat { width: 4%; }
+.total-row:not(.user-view) .col-total-amt {
+  width: 10%;
+  border-right: none;
+}
+
+/* ---------- USER VIEW (FIXED ALIGNMENT) ---------- */
+.total-row.user-view {
+  display: flex;
+}
+
+/* FORCE override widths */
+.total-row.user-view .col-sno-category-name {
+  flex: 0 0 43% !important;
+  width: auto !important;
+  justify-content: flex-start !important;
+  padding-left: 10px;
+}
+
+.total-row.user-view .col-qty {
+  flex: 0 0 10% !important;
+  width: auto !important;
+  text-align: right !important;
+  padding-right: 8px !important;
+}
+
+.total-row.user-view .col-per {
+  flex: 0 0 3% !important;
+  width: auto !important;
+}
+
+.total-row.user-view .col-fill-user {
+  flex: 1 !important;
+  width: auto !important;
+  border-right: none !important;
+}
+
+/* ---------- ACTION FOOTER ---------- */
 .action-footer-row {
   display: flex;
   align-items: center;
   padding: 4px 10px;
-  font-size: 12px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .narration-group {
@@ -151,36 +182,47 @@ input::-webkit-inner-spin-button {
   width: 700px;
 }
 
-.approval-input, .narration-input {
+.approval-input,
+.narration-input {
   border: 1px solid #999;
   background: #fdfdf0;
   height: 20px;
   padding: 0 5px;
-  font-size: 12px;
-  box-sizing: border-box;
 }
 
 .narration-input { width: 350px; }
-.approval-input { width: 150px; font-weight: bold; }
+
+.approval-input {
+  width: 150px;
+  font-weight: bold;
+}
 
 .btn-update {
   background: #228b22;
   color: white;
   border: none;
   padding: 0 20px;
-  font-size: 12px;
   font-weight: bold;
   cursor: pointer;
   height: 22px;
   margin-left: 20px;
 }
 
-/* UI Helpers */
+/* ---------- HELPERS ---------- */
 .center { text-align: center; }
-.text-right { text-align: right !important; padding-right: 8px !important; }
-.readonly { background-color: #f0f0f0; color: #333; }
 
+.text-right {
+  text-align: right !important;
+  padding-right: 8px !important;
+}
+
+.readonly {
+  background-color: #f0f0f0;
+}
+
+/* ---------- DROPDOWN ---------- */
 .dropdown-cell { position: relative; }
+
 .dropdown {
   position: absolute;
   top: 100%;
@@ -191,7 +233,6 @@ input::-webkit-inner-spin-button {
   background: #fff;
   border: 1px solid #000;
   z-index: 999;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
 .dropdown-item {
@@ -199,4 +240,15 @@ input::-webkit-inner-spin-button {
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
-.dropdown-item.active { background: #2c5697; color: white; }
+
+.dropdown-item.active {
+  background: #2c5697;
+  color: white;
+}
+
+/* ---------- QTY ALIGN ---------- */
+.qty-input {
+  font-weight: bold;
+  text-align: right;
+  padding-right: 8px !important;
+}

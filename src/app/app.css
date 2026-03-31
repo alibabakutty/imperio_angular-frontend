@@ -33,8 +33,11 @@
   cursor: default;
 }
 
-.distributor-bg { background-color: #f39c12; color: #fff; } /* Orange */
-.direct-bg { background-color: #27ae60; color: #fff; }      /* Green */
+.admin-bg {
+  background-color: #d32f2f; /* Deep Red for Admin */
+  color: white;
+}
+.user-bg { background-color: #f39c12; color: #fff; } /* Orange */
 
 .logout-btn {
   background: transparent;

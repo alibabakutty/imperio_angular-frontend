@@ -14,8 +14,8 @@ const MASTER_ROUTE_MAP: { [key: string]: string} = {
   selector: 'app-display-fetch',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './display_fetch.html',
-  styleUrls: ['./display_fetch.css'],
+  templateUrl: './display_fetch_master.html',
+  styleUrls: ['./display_fetch_master.css'],
 })
 export class DisplayFetchComponent {
   displayTitle: string = '';
@@ -85,7 +85,7 @@ export class DisplayFetchComponent {
             name: item.stockItemName,
             category: item.stockItemCategory,
             uom: item.uom,
-            rate: activeRateEntry ? activeRateEntry.rateMasterRate : '0.00'
+            rate: activeRateEntry ? Number(activeRateEntry.rateMasterRate ): 0
           }
 
         },
@@ -108,6 +108,15 @@ export class DisplayFetchComponent {
       
     }
   }
+
+  // Add this method inside your DisplayFetchComponent class
+formatToNaira(value: any): string {
+  const num = parseFloat(value) || 0;
+  return `₦ ${num.toLocaleString('en-NG', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  })}`;
+}
 
   goBack() {
     this.location.back();

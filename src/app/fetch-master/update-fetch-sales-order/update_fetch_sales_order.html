@@ -1,0 +1,46 @@
+<div class="main-container">
+  <div class="top-nav">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <input type="text" placeholder="Search..." class="search-input" />
+    <span class="update-title">{{ updateTitle }}</span>
+  </div>
+
+  <div class="table-wrapper">
+    <!-- Loader -->
+    @if (loading) {
+      <div class="loader">Loading...</div>
+    }
+
+    <!-- Table -->
+    @if (!loading) {
+      <table class="data-table">
+        <thead>
+          <tr>
+            @for (col of columns; track col) {
+              <th [class.text-right]="col === 'Amount'">{{ col }}</th>
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (item of groups$ | async; track item.id) {
+            <tr (click)="navigateToDetail(item)">
+              @for (key of dataKeys; track key) {
+                <td
+                  [class.text-right]="key === 'amount'"
+                  [class.capitalize-text]="key === 'partyName'"
+                >
+                  @if (key === 'amount') {
+                    {{ formatToNaira(item[key]) }}
+                  } @else {
+                    {{ item[key] }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

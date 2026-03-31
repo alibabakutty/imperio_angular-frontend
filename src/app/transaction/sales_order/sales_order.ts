@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { forkJoin, Subscription } from 'rxjs';
 import { LoginService } from '../../login/loginservice';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 interface OrderItem {
   stockCategory: string;
@@ -43,11 +44,12 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   approvedBy = '';
   items: OrderItem[] = [];
   stockItems: any[] = [];
-  isDistributor = false;
+  isUser = false;
   activeSearchIndex: number | null = null;
   filteredItems: any[] = [];
   highlightedIndex: number = 0;
   focusedCell: string | null = null;
+  orderId: string | null = null;
 
   private roleSub!: Subscription;
   private userSub!: Subscription;
@@ -58,26 +60,91 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private loginService: LoginService,
     private http: HttpClient,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
-    this.addNewRow();
-    this.fetchStockItems();
-    this.fetchNextOrderNumber();
+    // subscribe to params instead of using snapshot for better refresh handling
+    this.route.paramMap.subscribe((params) => {
+      this.orderId = params.get('orderNumber');
 
-    this.roleSub = this.loginService.role$.subscribe((role) => {
-      this.isDistributor = role === 'distributor';
-    });
+      this.http.get<any[]>('http://localhost:8080/api/v1/stock-items').subscribe({
+        next: (stockData) => {
+          this.stockItems = stockData;
+          this.filteredItems = [...stockData];
 
-    this.userSub = this.loginService.user$.subscribe((username) => {
-      if (username) {
-        this.partyName = username;
-        // automatically set 'order created by' if it's currently empty
-        if (!this.placedBy) {
-          this.placedBy = username;
-        }
-      }
+          if (this.orderId) {
+            this.fetchOrderForUpdate(this.orderId);
+          } else {
+            // normal create mode
+            this.addNewRow();
+            this.fetchNextOrderNumber();
+          }
+
+          // this.addNewRow();
+          this.fetchStockItems();
+          // this.fetchNextOrderNumber();
+
+          this.roleSub = this.loginService.role$.subscribe((role) => {
+            this.isUser = role === 'user';
+          });
+
+          this.userSub = this.loginService.user$.subscribe((username) => {
+            if (username) {
+              this.partyName = username;
+              // automatically set 'order created by' if it's currently empty
+              if (!this.placedBy) {
+                this.placedBy = username;
+              }
+            }
+          });
+        },
+      });
     });
+  }
+
+  fetchOrderForUpdate(orderNumber: string) {
+    this.http
+      .get<any[]>(`http://localhost:8080/api/v1/sales-orders/number/${orderNumber}`)
+      .subscribe({
+        next: (data) => {
+          if (!data || data.length === 0) {
+            console.error('No order found');
+            return;
+          }
+
+          // ✅ Use first record for header
+          const first = data[0];
+          this.orderNumber = first.orderNumber;
+          this.partyName = first.customerName;
+          this.ledgerName = first.ledgerName;
+          this.orderDate = this.formatDateForUI(first.orderDate);
+          this.narration = first.narration;
+          this.placedBy = first.orderPlacedBy;
+          this.approvedBy = first.orderApprovedBy;
+
+          // ✅ IMPORTANT: map ALL items
+          this.items = data.map((order) => ({
+            stockCategory: order.stockCategory,
+            itemName: order.itemName,
+            itemQuantity: order.itemQuantity,
+            unit: order.uom,
+            itemRate: order.itemRate,
+            discPercent: order.discountPercentage,
+            vatPercent: order.vatPercentage,
+          }));
+          setTimeout(() => {
+            this.focusFirstInput();
+          }, 200);
+        },
+        error: (err) => console.error('Error fetching order:', err),
+      });
+  }
+
+  formatDateForUI(dateStr: string): string {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-'); // 2026-03-30
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
   }
 
   ngAfterViewInit() {
@@ -119,18 +186,26 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // ================= DROPDOWN =================
+  // sales-order.component.ts
+
   openDropdown(index: number) {
     this.activeSearchIndex = index;
-    this.filteredItems = [...this.stockItems];
-    // get the current item's name to find its position in the list
-    const currentItemName = this.items[index].itemName;
 
+    // Ensure we have the full list available immediately
+    this.filteredItems = [...this.stockItems];
+
+    // Reset highlight to the top
+    this.highlightedIndex = 0;
+    // Optional: If you want to highlight the already selected item in the dropdown
+    const currentItemName = this.items[index].itemName;
     if (currentItemName) {
       const foundIndex = this.filteredItems.findIndex((p) => p.stockItemName === currentItemName);
-    } else {
-      this.highlightedIndex = 0;
+      if (foundIndex !== -1) {
+        this.highlightedIndex = foundIndex;
+      }
     }
-    setTimeout(() => this.scrollToActive(), 0);
+    // Use a slight timeout to ensure the DOM is ready for scrolling
+    setTimeout(() => this.scrollToActive(), 10);
   }
 
   filterItems(value: string) {
@@ -228,9 +303,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // ================= SELECT PRODUCT =================
   selectProduct(item: OrderItem, product: any) {
-    // ✅ Only put the category in the input field
     item.stockCategory = product.stockItemCategory;
-    // ✅ Store the name separately (it will show in the "Name of Item" column via binding)
     item.itemName = product.stockItemName;
     item.unit = product.uom;
 
@@ -243,20 +316,18 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.closeDropdown();
 
+    // Focus the Qty input of the CURRENT row
     setTimeout(() => {
-      const inputs = this.inputFields.toArray();
       const rowIndex = this.items.indexOf(item);
-      // Standard mode has 6 inputs (#inputField) per row.
-      // Distributor mode has 3 inputs (#inputField) per row.
-      const inputsPerRow = this.isDistributor ? 3 : 6;
-      // In both modes, "Qty" is the 3rd input in the row (index 2 relative to row start)
-      const qtyInputIndex = (rowIndex * inputsPerRow) + 2;
-      
+      const inputsPerRow = this.isUser ? 3 : 6;
+      const qtyInputIndex = rowIndex * inputsPerRow + 2;
+
+      const inputs = this.inputFields.toArray();
       if (inputs[qtyInputIndex]) {
         inputs[qtyInputIndex].nativeElement.focus();
         inputs[qtyInputIndex].nativeElement.select();
       }
-    }, 50);
+    }, 100);
   }
 
   // ================= CALCULATIONS =================
@@ -319,12 +390,12 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     const isLastRow = rowIndex === this.items.length - 1;
 
     // 1. Check if we should add a new row
-    // For Distributor: Add after Qty
-    const shouldAddDistributor = this.isDistributor && fieldType === 'itemQuantity';
+    // For User: Add after Qty
+    const shouldAddUser = this.isUser && fieldType === 'itemQuantity';
     // For Standard: Add after VAT % (the last input in the row)
-    const shouldAddStandard = !this.isDistributor && fieldType === 'vatPercent';
+    const shouldAddStandard = !this.isUser && fieldType === 'vatPercent';
 
-    if (isLastRow && (shouldAddDistributor || shouldAddStandard)) {
+    if (isLastRow && (shouldAddUser || shouldAddStandard)) {
       this.addNewRowWithFocus();
       return;
     }
@@ -345,7 +416,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   focusFirstInputOfLastRow() {
     const inputs = this.inputFields.toArray();
     // The first input of the last row is always (Total Inputs - Inputs In One Row)
-    const inputsPerRow = this.isDistributor ? 3 : 6;
+    const inputsPerRow = this.isUser ? 3 : 6;
     const targetIndex = inputs.length - inputsPerRow;
 
     if (inputs[targetIndex]) {
@@ -432,6 +503,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     const requests = validItems.map((item) => {
       const payload = {
         orderNumber: currentNo,
+        customerName: this.partyName,
         ledgerName: this.ledgerName,
         orderDate: this.formatDateForBackend(this.orderDate),
         stockCategory: item.stockCategory,
@@ -497,5 +569,44 @@ export class SalesOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.highlightedIndex = 0;
     // Re-focus the first field
     setTimeout(() => this.focusFirstInput(), 100);
+  }
+
+  proceedToUpdate() {
+    const validItems = this.items.filter((i) => i.itemName && i.itemQuantity > 0);
+    const requests = validItems.map((item) => {
+      const payload = {
+        // Include ID in payload if your backend needs it
+        orderNumber: this.orderNumber,
+        customerName: this.partyName,
+        ledgerName: this.ledgerName,
+        orderDate: this.formatDateForBackend(this.orderDate),
+        stockCategory: item.stockCategory,
+        itemName: item.itemName,
+        itemQuantity: item.itemQuantity,
+        uom: item.unit,
+        itemRate: item.itemRate,
+        discountPercentage: item.discPercent,
+        vatPercentage: item.vatPercent,
+        narration: this.narration,
+        orderPlacedBy: this.placedBy,
+        orderApprovedBy: this.approvedBy,
+        itemNetRate: this.getNetRate(item),
+        itemNetAmount: this.getAmount(item),
+        totalAmount: this.getTotalAmt(item),
+        grossTotalAmount: this.getGrandTotal(),
+        grossItemQuantity: this.getTotalQty(),
+      };
+
+      // Use PUT for updates
+      return this.http.put(
+        `http://localhost:8080/api/v1/sales-orders/number/${this.orderNumber}`,
+        payload,
+      );
+    });
+
+    forkJoin(requests).subscribe({
+      next: () => alert('Order updated successfully!'),
+      error: (err) => alert('Error updating order.'),
+    });
   }
 }

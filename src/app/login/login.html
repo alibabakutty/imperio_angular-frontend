@@ -47,16 +47,16 @@
           <div class="form-group" *ngIf="isRegisterMode">
           <label>Role</label>
           <select name="role" [(ngModel)]="login.role" class="role-select">
-            <option value="distributor">Distributor</option>
-            <option value="direct">Direct</option>
+            <option value="admin">Administrator</option>
+            <option value="user">User</option>
             <!-- <option value="staff">Staff</option> -->
           </select>
         </div>
 
           <div class="form-actions">
-          <a href="javascript:void(0)" (click)="toggleMode()">
+          <!-- <a href="javascript:void(0)" (click)="toggleMode()">
             {{ isRegisterMode ? 'Already have an account? Login' : 'Wanna Register?' }}
-          </a>
+          </a> -->
 
           <button type="submit" class="btn btn-success" [disabled]="loginForm.invalid || isLoading">
             <span *ngIf="!isLoading">{{ isRegisterMode ? 'Register' : 'Login' }}</span>

@@ -14,8 +14,8 @@ const MASTER_ROUTE_MAP: { [key: string]: string} = {
   selector: 'app-update-fetch',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './update_fetch.html',
-  styleUrls: ['./update_fetch.css'],
+  templateUrl: './update_fetch_master.html',
+  styleUrls: ['./update_fetch_master.css'],
 })
 export class UpdateFetchComponent {
   updateTitle: string = '';
@@ -85,7 +85,7 @@ export class UpdateFetchComponent {
             name: item.stockItemName,
             category: item.stockItemCategory,
             uom: item.uom,
-            rate: activeRateEntry ? activeRateEntry.rateMasterRate : '0.00'
+            rate: activeRateEntry ? Number(activeRateEntry.rateMasterRate) : 0
           }
         },
       },
@@ -106,6 +106,15 @@ export class UpdateFetchComponent {
       console.warn(`No routing configuration found for title: ${cleanTitle}`);
     }
   }
+
+   // Add this method inside your DisplayFetchComponent class
+formatToNaira(value: any): string {
+  const num = parseFloat(value) || 0;
+  return `₦ ${num.toLocaleString('en-NG', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  })}`;
+}
 
   goBack() {
     this.location.back();

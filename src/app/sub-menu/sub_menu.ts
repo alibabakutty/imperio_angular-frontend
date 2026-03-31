@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 
 @Component({
   selector: 'app-sub-menu',
@@ -17,13 +17,13 @@ export class SubMenu implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       
     this.currentTitle = params['title'] || 'Master';
-
       console.log('Received:', this.currentTitle); // DEBUG
 
       this.headerTitle = this.currentTitle.toUpperCase();
@@ -48,6 +48,11 @@ export class SubMenu implements OnInit {
   }
 
   routepath(path: string) {
+    if (path === 'menu') {
+      this.location.back();
+      return;
+    }
+    
     this.router.navigate([path], {
         queryParams: { title: this.currentTitle }
     });

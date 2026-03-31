@@ -22,9 +22,10 @@ export class Tally {
       ], 
     },
     {
-      title: 'TRANSACTIONS',
+      title: 'VOUCHERS',
       items: [
-        { label: 'Imperio Sales Order', hotkey: 'I', path: 'sales_order'}
+        { label: 'Imperio Sales Order', hotkey: 'I', path: 'sales_order_create'},
+        { label: 'DayBook', hotkey: 'D', path: 'daybook'}
       ]
     }
   ];

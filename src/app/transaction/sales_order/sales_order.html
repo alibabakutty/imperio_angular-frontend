@@ -25,7 +25,7 @@
           <th width="32%">Name of Item</th>
           <th width="10%">Qty</th>
           <th width="3%">Per</th>
-          <ng-container *ngIf="!isDistributor">
+          <ng-container *ngIf="!isUser">
             <th width="8%">Rate</th>
             <th width="4%">Disc %</th>
             <th width="8%">Net Rate</th>
@@ -81,7 +81,7 @@
 
           <td class="center uppercase">{{ item.unit }}</td>
 
-          <ng-container *ngIf="!isDistributor">
+          <ng-container *ngIf="!isUser">
             <td>
               <input
                 type="text"
@@ -121,26 +121,25 @@
   </div>
 
   <div class="footer-totals">
-    <div class="total-row">
-      <span class="col-label">Grand Total :</span>
+    <div class="total-row" [class.user-view]="isUser">
+      <span class="col-sno-category-name">Grand Total :</span>
 
       <span class="col-qty">{{ getTotalQty() | number: '1.2-2' }}</span>
 
-      <span class="col-empty-per"></span>
+      <span class="col-per"></span>
 
-      <ng-container *ngIf="!isDistributor">
+      <ng-container *ngIf="!isUser; else userFooter">
         <span class="col-rate">{{ formatNaira(getGrandRate()) }}</span>
-
-        <span class="col-empty-disc"></span>
-
+        <span class="col-disc"></span>
         <span class="col-net">{{ formatNaira(getGrandNetRate()) }}</span>
-
         <span class="col-amt">{{ formatNaira(getGrandAmount()) }}</span>
-
-        <span class="col-empty-vat"></span>
-
+        <span class="col-vat"></span>
         <span class="col-total-amt">{{ formatNaira(getGrandTotal()) }}</span>
       </ng-container>
+
+      <ng-template #userFooter>
+        <span class="col-fill-user"></span>
+      </ng-template>
     </div>
 
     <div class="action-footer-row">
@@ -160,7 +159,9 @@
         </div>
       </div>
 
-      <button class="btn-update" (click)="createSalesOrder()">CREATE</button>
+      <button class="btn-update" (click)="orderId ? proceedToUpdate() : createSalesOrder()">
+        {{ orderId ? 'UPDATE' : 'CREATE' }}
+      </button>
     </div>
   </div>
 </div>
